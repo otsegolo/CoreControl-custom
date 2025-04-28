@@ -21,6 +21,8 @@ type Server struct {
 	CpuUsage      sql.NullFloat64
 	RamUsage      sql.NullFloat64
 	DiskUsage     sql.NullFloat64
+	GpuUsage      sql.NullFloat64
+	Temp          sql.NullFloat64
 	Uptime        sql.NullString
 }
 
@@ -49,6 +51,14 @@ type FSResponse []struct {
 
 type UptimeResponse struct {
 	Value string `json:"value"`
+}
+
+type GPUResponse struct {
+	Value float64 `json:"value"`
+}
+
+type TempResponse struct {
+	Value float64 `json:"value"`
 }
 
 type Notification struct {
