@@ -66,6 +66,7 @@ import NextLink from "next/link"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useTranslations } from "next-intl"
 
 interface ServerHistory {
   labels: string[];
@@ -122,7 +123,8 @@ interface MonitoringData {
   temp?: number
 }
 
-export default function Dashboard() {
+export default function Servers() {
+  const t = useTranslations('Servers')
   const [host, setHost] = useState<boolean>(false)
   const [hostServer, setHostServer] = useState<number>(0)
   const [name, setName] = useState<string>("")
@@ -465,18 +467,14 @@ export default function Dashboard() {
     };
   }, []);
 
-  // Handler für benutzerdefinierte Zahleneingaben mit Verzögerung
   const handleItemsPerPageChange = (value: string) => {
-    // Bestehenden Timer löschen
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Neuen Timer setzen
     debounceTimerRef.current = setTimeout(() => {
       const newItemsPerPage = parseInt(value);
       
-      // Sicherstellen, dass der Wert im gültigen Bereich liegt
       if (isNaN(newItemsPerPage) || newItemsPerPage < 1) {
         toast.error("Bitte eine Zahl zwischen 1 und 100 eingeben");
         return;
@@ -485,37 +483,31 @@ export default function Dashboard() {
       const validatedValue = Math.min(Math.max(newItemsPerPage, 1), 100);
       
       setItemsPerPage(validatedValue);
-      setCurrentPage(1); // Zurück zur ersten Seite
+      setCurrentPage(1);
       Cookies.set("itemsPerPage-servers", String(validatedValue), {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
       
-      // Daten mit neuer Paginierung abrufen
       getServers();
-    }, 600); // 600ms Verzögerung für bessere Eingabe mehrziffriger Zahlen
+    }, 600);
   };
 
-  // Handler für voreingestellte Werte aus dem Dropdown
   const handlePresetItemsPerPageChange = (value: string) => {
-    // Für voreingestellte Werte sofort anwenden
     const newItemsPerPage = parseInt(value);
     
-    // Nur Standardwerte hier verarbeiten
     if ([4, 6, 10, 15, 20, 25].includes(newItemsPerPage)) {
       setItemsPerPage(newItemsPerPage);
-      setCurrentPage(1); // Zurück zur ersten Seite
+      setCurrentPage(1);
       Cookies.set("itemsPerPage-servers", String(newItemsPerPage), {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
       
-      // Daten mit neuer Paginierung abrufen
       getServers();
     } else {
-      // Für benutzerdefinierte Werte den verzögerten Handler verwenden
       handleItemsPerPageChange(value);
     }
   };
@@ -535,11 +527,11 @@ export default function Dashboard() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>My Infrastructure</BreadcrumbPage>
+                  <BreadcrumbPage>{t('MyInfrastructure')}</BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Servers</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Servers')}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -548,11 +540,11 @@ export default function Dashboard() {
         <Toaster />
         <div className="p-6">
           <div className="flex justify-between items-center">
-            <span className="text-3xl font-bold">Your Servers</span>
+            <span className="text-3xl font-bold">{t('YourServers')}</span>
             <div className="flex gap-2">              
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" title="Change view">
+                  <Button variant="outline" size="icon" title={t('ChangeView')}>
                     {isGridLayout ? (
                       <LayoutGrid className="h-4 w-4" />
                     ) : (
@@ -562,10 +554,10 @@ export default function Dashboard() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => toggleLayout(false)}>
-                    <List className="h-4 w-4 mr-2" /> List View
+                    <List className="h-4 w-4 mr-2" /> {t('ListView')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => toggleLayout(true)}>
-                    <LayoutGrid className="h-4 w-4 mr-2" /> Grid View
+                    <LayoutGrid className="h-4 w-4 mr-2" /> {t('GridView')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -581,23 +573,23 @@ export default function Dashboard() {
               >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue>
-                    {itemsPerPage} {itemsPerPage === 1 ? 'item' : 'items'}
+                    {itemsPerPage} {itemsPerPage === 1 ? t('ItemsPerPage.item') : t('ItemsPerPage.items')}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {![4, 6, 10, 15, 20, 25].includes(itemsPerPage) ? (
                     <SelectItem value={String(itemsPerPage)}>
-                      {itemsPerPage} {itemsPerPage === 1 ? 'item' : 'items'} (custom)
+                      {itemsPerPage} {itemsPerPage === 1 ? t('ItemsPerPage.item') : t('ItemsPerPage.items')} ({t('ItemsPerPage.Custom')})
                     </SelectItem>
                   ) : null}
-                  <SelectItem value="4">4 items</SelectItem>
-                  <SelectItem value="6">6 items</SelectItem>
-                  <SelectItem value="10">10 items</SelectItem>
-                  <SelectItem value="15">15 items</SelectItem>
-                  <SelectItem value="20">20 items</SelectItem>
-                  <SelectItem value="25">25 items</SelectItem>
+                  <SelectItem value="4">{t('4')}</SelectItem>
+                  <SelectItem value="6">{t('6')}</SelectItem>
+                  <SelectItem value="10">{t('10')}</SelectItem>
+                  <SelectItem value="15">{t('15')}</SelectItem>
+                  <SelectItem value="20">{t('20')}</SelectItem>
+                  <SelectItem value="25">{t('25')}</SelectItem>
                   <div className="p-2 border-t mt-1">
-                    <Label htmlFor="custom-items" className="text-xs font-medium">Custom (1-100)</Label>
+                    <Label htmlFor="custom-items" className="text-xs font-medium">{t('ItemsPerPage.Custom')}</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Input
                         id="custom-items"
@@ -608,8 +600,6 @@ export default function Dashboard() {
                         className="h-8"
                         defaultValue={itemsPerPage}
                         onChange={(e) => {
-                          // Änderung nicht sofort anwenden während des Tippens
-                          // Nur visuelles Feedback für die Validierung
                           const value = parseInt(e.target.value);
                           if (isNaN(value) || value < 1 || value > 100) {
                             e.target.classList.add("border-red-500");
@@ -618,7 +608,6 @@ export default function Dashboard() {
                           }
                         }}
                         onBlur={(e) => {
-                          // Änderung anwenden, wenn das Input den Fokus verliert
                           const value = parseInt(e.target.value);
                           if (value >= 1 && value <= 100) {
                             handleItemsPerPageChange(e.target.value);
@@ -626,7 +615,6 @@ export default function Dashboard() {
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            // Bestehenden Debounce-Timer löschen, um sofort anzuwenden
                             if (debounceTimerRef.current) {
                               clearTimeout(debounceTimerRef.current);
                               debounceTimerRef.current = null;
@@ -634,7 +622,6 @@ export default function Dashboard() {
                             
                             const value = parseInt((e.target as HTMLInputElement).value);
                             if (value >= 1 && value <= 100) {
-                              // Änderung sofort bei Enter anwenden
                               const validatedValue = Math.min(Math.max(value, 1), 100);
                               setItemsPerPage(validatedValue);
                               setCurrentPage(1);
@@ -644,11 +631,8 @@ export default function Dashboard() {
                                 sameSite: "strict",
                               });
                               
-                              // Kurze Verzögerung hinzufügen für bessere Reaktionsfähigkeit
                               setTimeout(() => {
                                 getServers();
-                                
-                                // Dropdown schließen
                                 document.body.click();
                               }, 50);
                             }
@@ -656,7 +640,7 @@ export default function Dashboard() {
                         }}
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">items</span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{t('ItemsPerPage.items')}</span>
                     </div>
                   </div>
                 </SelectContent>
@@ -671,7 +655,7 @@ export default function Dashboard() {
                 <AlertDialogContent className="max-w-[95vw] w-[600px] max-h-[90vh] overflow-y-auto">
                   <AlertDialogHeader>
                     <AlertDialogTitle className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                      <span>Add a server</span>
+                      <span>{t('AddServer.Title')}</span>
                       <Select 
                         onValueChange={(value) => {
                           if (!value) return;
@@ -727,20 +711,20 @@ export default function Dashboard() {
                     <AlertDialogDescription>
                       <Tabs defaultValue="general" className="w-full">
                         <TabsList className="w-full">
-                          <TabsTrigger value="general">General</TabsTrigger>
-                          <TabsTrigger value="hardware">Hardware</TabsTrigger>
-                          <TabsTrigger value="virtualization">Host</TabsTrigger>
-                          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
+                          <TabsTrigger value="general">{t('Tabs.General')}</TabsTrigger>
+                          <TabsTrigger value="hardware">{t('Tabs.Hardware')}</TabsTrigger>
+                          <TabsTrigger value="virtualization">{t('Tabs.Host')}</TabsTrigger>
+                          <TabsTrigger value="monitoring">{t('Tabs.Monitoring')}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="general">
                           <div className="space-y-4 pt-4">
                             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                               <div className="grid w-full sm:w-[calc(100%-52px)] items-center gap-1.5">
-                                <Label htmlFor="icon">Icon</Label>
+                                <Label htmlFor="icon">{t('AddServer.General.Icon')}</Label>
                                 <div className="space-y-2">
                                   <Select value={icon} onValueChange={(value) => setIcon(value)}>
                                     <SelectTrigger className="w-full">
-                                      <SelectValue placeholder="Select an icon">
+                                      <SelectValue placeholder={t('AddServer.General.IconPlaceholder')}>
                                         {icon && (
                                           <div className="flex items-center gap-2">
                                             <DynamicIcon name={icon as any} size={18} />
@@ -751,7 +735,7 @@ export default function Dashboard() {
                                     </SelectTrigger>
                                     <SelectContent className="max-h-[300px]">
                                       <Input
-                                        placeholder="Search icons..."
+                                        placeholder={t('AddServer.General.IconSearchPlaceholder')}
                                         className="mb-2"
                                         onChange={(e) => {
                                           const iconElements = document.querySelectorAll("[data-icon-item]")
@@ -792,14 +776,14 @@ export default function Dashboard() {
                                 </div>
                               </div>
                               <div className="grid w-[52px] items-center gap-1.5">
-                                <Label htmlFor="icon">Preview</Label>
+                                <Label htmlFor="icon">{t('AddServer.General.Preview')}</Label>
                                 <div className="flex items-center justify-center">
                                   {icon && <DynamicIcon name={icon as any} size={36} />}
                                 </div>
                               </div>
                             </div>
                             <div className="grid w-full items-center gap-1.5">
-                              <Label htmlFor="name">Name</Label>
+                              <Label htmlFor="name">{t('AddServer.General.Name')}</Label>
                               <Input
                                 id="name"
                                 type="text"
@@ -810,11 +794,11 @@ export default function Dashboard() {
                             </div>
                             <div className="grid w-full items-center gap-1.5">
                               <Label htmlFor="description">
-                                Operating System <span className="text-stone-600">(optional)</span>
+                                {t('AddServer.General.OperatingSystem')} <span className="text-stone-600">({t('optional')})</span>
                               </Label>
                               <Select value={os} onValueChange={(value) => setOs(value)}>
                                 <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select OS" />
+                                  <SelectValue placeholder={t('AddServer.General.OperatingSystemPlaceholder')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="Windows">Windows</SelectItem>
@@ -825,7 +809,7 @@ export default function Dashboard() {
                             </div>
                             <div className="grid w-full items-center gap-1.5">
                               <Label htmlFor="ip">
-                                IP Adress <span className="text-stone-600">(optional)</span>
+                                {t('AddServer.General.IPAdress')} <span className="text-stone-600">({t('optional')})</span>
                               </Label>
                               <Input
                                 id="ip"
@@ -840,12 +824,11 @@ export default function Dashboard() {
                                 <Tooltip>
                                   <TooltipTrigger>
                                     <Label htmlFor="publicURL">
-                                      Management URL <span className="text-stone-600">(optional)</span>
+                                      {t('AddServer.General.ManagementURL')} <span className="text-stone-600">({t('optional')})</span>
                                     </Label>
                                   </TooltipTrigger>
                                   <TooltipContent>
-                                    Link to a web interface (e.g. Proxmox or Portainer) with which the server can be
-                                    managed
+                                    {t('AddServer.General.ManagementURLTooltip')}
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
@@ -863,7 +846,7 @@ export default function Dashboard() {
                           <div className="space-y-4 pt-4">
                             <div className="grid w-full items-center gap-1.5">
                               <Label htmlFor="cpu">
-                                CPU <span className="text-stone-600">(optional)</span>
+                                {t('AddServer.Hardware.CPU')} <span className="text-stone-600">({t('optional')})</span>
                               </Label>
                               <Input
                                 id="cpu"
@@ -875,7 +858,7 @@ export default function Dashboard() {
                             </div>
                             <div className="grid w-full items-center gap-1.5">
                               <Label htmlFor="gpu">
-                                GPU <span className="text-stone-600">(optional)</span>
+                                {t('AddServer.Hardware.GPU')} <span className="text-stone-600">({t('optional')})</span>
                               </Label>
                               <Input
                                 id="gpu"
@@ -887,7 +870,7 @@ export default function Dashboard() {
                             </div>
                             <div className="grid w-full items-center gap-1.5">
                               <Label htmlFor="ram">
-                                RAM <span className="text-stone-600">(optional)</span>
+                                {t('AddServer.Hardware.RAM')} <span className="text-stone-600">({t('optional')})</span>
                               </Label>
                               <Input
                                 id="ram"
@@ -899,7 +882,7 @@ export default function Dashboard() {
                             </div>
                             <div className="grid w-full items-center gap-1.5">
                               <Label htmlFor="disk">
-                                Disk <span className="text-stone-600">(optional)</span>
+                                {t('AddServer.Hardware.Disk')} <span className="text-stone-600">({t('optional')})</span>
                               </Label>
                               <Input
                                 id="disk"
@@ -919,11 +902,11 @@ export default function Dashboard() {
                                 checked={host}
                                 onCheckedChange={(checked) => setHost(checked === true)}
                               />
-                              <Label htmlFor="hostCheckbox">Mark as host server</Label>
+                              <Label htmlFor="hostCheckbox">{t('AddServer.Host.MarkAsHostServer')}</Label>
                             </div>
                             {!host && (
                               <div className="grid w-full items-center gap-1.5">
-                                <Label>Host Server</Label>
+                                <Label>{t('AddServer.Host.SelectHostServer')}</Label>
                                 <Select
                                   value={hostServer?.toString()}
                                   onValueChange={(value) => {
@@ -935,10 +918,10 @@ export default function Dashboard() {
                                   }}
                                 >
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select a host server" />
+                                    <SelectValue placeholder={t('AddServer.Host.SelectHostServerPlaceholder')} />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="0">No host server</SelectItem>
+                                    <SelectItem value="0">{t('AddServer.Host.NoHostServer')}</SelectItem>
                                     {hostServers.map((server) => (
                                       <SelectItem key={server.id} value={server.id.toString()}>
                                         {server.name}
@@ -958,12 +941,12 @@ export default function Dashboard() {
                                 checked={monitoring}
                                 onCheckedChange={(checked) => setMonitoring(checked === true)}
                               />
-                              <Label htmlFor="monitoringCheckbox">Enable monitoring</Label>
+                              <Label htmlFor="monitoringCheckbox">{t('AddServer.Monitoring.Enable')}</Label>
                             </div>
                             {monitoring && (
                               <>
                                 <div className="grid w-full items-center gap-1.5">
-                                  <Label htmlFor="monitoringURL">Monitoring URL</Label>
+                                  <Label htmlFor="monitoringURL">{t('AddServer.Monitoring.URL')}</Label>
                                   <Input
                                     id="monitoringURL"
                                     type="text"
@@ -973,9 +956,9 @@ export default function Dashboard() {
                                   />
                                 </div>
                                 <div className="mt-4 p-4 border rounded-lg bg-muted">
-                                  <h4 className="text-sm font-semibold mb-2">Required Server Setup</h4>
+                                  <h4 className="text-sm font-semibold mb-2">{t('AddServer.Monitoring.SetupTitle')}</h4>
                                   <p className="text-sm text-muted-foreground mb-3">
-                                    To enable monitoring, you need to install Glances on your server. Here's an example Docker Compose configuration:
+                                    {t('AddServer.Monitoring.SetupDescription')}
                                   </p>
                                   <pre className="bg-background p-4 rounded-md text-sm overflow-x-auto">
                                     <code>{`services:
@@ -1000,8 +983,8 @@ export default function Dashboard() {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={add}>Add</AlertDialogAction>
+                    <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={add}>{t('add')}</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

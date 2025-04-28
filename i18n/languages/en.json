@@ -47,5 +47,68 @@
             "ActiveConnections": "Active Connections",
             "ViewNetworkDetails": "View network details"
         }
+    },
+    "Servers": {
+        "MyInfrastructure": "My Infrastructure",
+        "Title": "Servers",
+        "YourServers": "Your Servers",
+        "ChangeView": "Change View",
+        "ListView": "List View",
+        "GridView": "Grid View",
+        "ItemsPerPage": {
+            "items": "items",
+            "item": "item",
+            "4": "4 items",
+            "6": "6 items",
+            "10": "10 items",
+            "15": "15 items",
+            "20": "20 items",
+            "25": "25 items",
+            "Custom": "Custom (1-100)"
+        },
+        "Tabs": {
+            "General": "General",
+            "Hardware": "Hardware",
+            "Host": "Host",
+            "Monitoring": "Monitoring"
+        },
+        "optional": "optional",
+        "cancel": "Cancel",
+        "add": "Add",
+        "AddServer": {
+            "Title": "Add a server",
+            "General": {
+                "Title": "Add a server",
+                "CopyServer": "Copy server",
+                "Icon": "Icon",
+                "IconPlaceholder": "Select an icon",
+                "IconSearchPlaceholder": "Search icons...",
+                "Preview": "Preview",
+                "Name": "Name",
+                "OperatingSystem": "Operating System",
+                "OperatingSystemPlaceholder": "Select OS",
+                "IPAdress": "IP Adress",
+                "ManagementURL": "Management URL",
+                "ManagementURLTooltip": "Link to a web interface (e.g. Proxmox or Portainer) with which the server can be managed"
+            },
+            "Hardware": {
+                "CPU": "CPU",
+                "GPU": "GPU",
+                "RAM": "RAM",
+                "Storage": "Storage"
+            },
+            "Host": {
+                "MarkAsHostServer": "Mark as host server",
+                "SelectHostServer": "Select a host server",
+                "SelectHostServerPlaceholder": "Select a host server",
+                "NoHostServer": "No host server"
+            },
+            "Monitoring": {
+                "Enable": "Enable monitoring",
+                "URL": "Monitoring URL",
+                "SetupTitle": "Required Server Setup",
+                "SetupDescription": "To enable monitoring, you need to install Glances on your server. Here's an example Docker Compose configuration:"
+            }
+        }
     }
 }
