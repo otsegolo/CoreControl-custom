@@ -627,26 +627,35 @@ export default function ServerDetail() {
                             </div>
                             <span>{server.diskUsage !== null && server.diskUsage !== undefined ? `${server.diskUsage}%` : "NO DATA"}</span>
                           </div>
-                          <div className="text-muted-foreground">GPU Usage:</div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                          {server.gpuUsage && server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage.toString() !== "0" && (
+                            <>
+                              <div className="text-muted-foreground">GPU Usage:</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
                                 className={`h-full ${server.gpuUsage && server.gpuUsage > 80 ? "bg-destructive" : server.gpuUsage && server.gpuUsage > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
                                 style={{ width: `${server.gpuUsage || 0}%` }}
                               />
                             </div>
-                            <span>{server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage !== 0 ? `${server.gpuUsage}%` : "NO DATA"}</span>
-                          </div>
-                          <div className="text-muted-foreground">Temperature:</div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                            <span>
+                            {server.gpuUsage && server.gpuUsage !== null && server.gpuUsage !== undefined ? `${server.gpuUsage}%` : "NO DATA"}</span>
+                              </div>
+                            </>
+                          )}
+                          {server.temp && server.temp !== null && server.temp !== undefined && server.temp.toString() !== "0" && (
+                            <>
+                              <div className="text-muted-foreground">Temperature:</div>
+                              <div className="flex items-center gap-2">
+                                <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
                                 className={`h-full ${server.temp && server.temp > 80 ? "bg-destructive" : server.temp && server.temp > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
                                 style={{ width: `${Math.min(server.temp || 0, 100)}%` }}
                               />
                             </div>
                             <span>{server.temp !== null && server.temp !== undefined && server.temp !== 0 ? `${server.temp}°C` : "NO DATA"}</span>
-                          </div>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     )}
@@ -699,12 +708,16 @@ export default function ServerDetail() {
                           <div className="h-[200px] relative bg-background">
                             <canvas id="disk-chart" />
                           </div>
-                          <div className="h-[200px] relative bg-background">
-                            <canvas id="gpu-chart" />
-                          </div>
-                          <div className="h-[200px] relative bg-background">
-                            <canvas id="temp-chart" />
-                          </div>
+                          {server.history?.datasets.gpu.some(value => value !== null && value !== 0) && (
+                            <div className="h-[200px] relative bg-background">
+                              <canvas id="gpu-chart" />
+                            </div>
+                          )}
+                          {server.history?.datasets.temp.some(value => value !== null && value !== 0) && (
+                            <div className="h-[200px] relative bg-background">
+                              <canvas id="temp-chart" />
+                            </div>
+                          )}
                         </div>
                     </CardContent>
                   </Card>

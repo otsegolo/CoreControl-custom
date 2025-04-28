@@ -118,6 +118,8 @@ interface MonitoringData {
   ramUsage: number
   diskUsage: number
   uptime: number
+  gpuUsage?: number
+  temp?: number
 }
 
 export default function Dashboard() {
@@ -239,7 +241,6 @@ export default function Dashboard() {
         console.log("ID:" + server.id)
       }
       setServers(response.data.servers)
-      console.log(response.data.servers)
       setMaxPage(response.data.maxPage)
       setTotalItems(response.data.totalItems)
       setLoading(false)
@@ -437,7 +438,9 @@ export default function Dashboard() {
               online: serverMonitoring.online,
               cpuUsage: serverMonitoring.cpuUsage,
               ramUsage: serverMonitoring.ramUsage,
-              diskUsage: serverMonitoring.diskUsage
+              diskUsage: serverMonitoring.diskUsage,
+              gpuUsage: serverMonitoring.gpuUsage ? Number(serverMonitoring.gpuUsage) : 0,
+              temp: serverMonitoring.temp ? Number(serverMonitoring.temp) : 0
             };
           }
           return server;
@@ -1169,13 +1172,21 @@ export default function Dashboard() {
                                         </div>
 
                                         <div>
-                                          <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                              <Microchip className="h-4 w-4 text-muted-foreground" />
-                                              <span className="text-sm font-medium">GPU</span>
-                                            </div>
-                                            <span className="text-xs font-medium">{server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage !== 0 ? `${server.gpuUsage}%` : "NO DATA"}</span>
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <Microchip className="h-4 w-4 text-muted-foreground" />
+                                            <span className="text-sm font-medium">GPU</span>
                                           </div>
+                                          <span className="text-xs font-medium">
+                                            {server.online && 
+                                            server.gpuUsage &&
+                                            server.gpuUsage !== null && 
+                                            server.gpuUsage !== undefined &&
+                                            server.gpuUsage.toString() !== "0"
+                                              ? `${server.gpuUsage}%` 
+                                              : "NO DATA"}
+                                          </span>
+                                        </div>
                                           <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
                                             <div
                                               className={`h-full ${server.gpuUsage && server.gpuUsage > 80 ? "bg-destructive" : server.gpuUsage && server.gpuUsage > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
@@ -1186,13 +1197,20 @@ export default function Dashboard() {
                                       </div>
                                       
                                       <div className="mt-4">
-                                        <div className="flex items-center justify-between">
-                                          <div className="flex items-center gap-2">
-                                            <Thermometer className="h-4 w-4 text-muted-foreground" />
-                                            <span className="text-sm font-medium">Temp</span>
-                                          </div>
-                                          <span className="text-xs font-medium">{server.temp !== null && server.temp !== undefined && server.temp !== 0 ? `${server.temp}°C` : "NO DATA"}</span>
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                          <Thermometer className="h-4 w-4 text-muted-foreground" />
+                                          <span className="text-sm font-medium">Temp</span>
                                         </div>
+                                        <span className="text-xs font-medium">
+                                          {server.online && 
+                                          server.temp !== null && 
+                                          server.temp !== undefined &&
+                                          server.temp.toString() !== "0"
+                                            ? `${server.temp}°C` 
+                                            : "NO DATA"}
+                                        </span>
+                                      </div>
                                         <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
                                           <div
                                             className={`h-full ${server.temp && server.temp > 80 ? "bg-destructive" : server.temp && server.temp > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
