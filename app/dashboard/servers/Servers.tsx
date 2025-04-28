@@ -668,9 +668,9 @@ export default function Dashboard() {
                     <Plus />
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="max-w-[95vw] w-[600px] max-h-[90vh] overflow-y-auto">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="flex justify-between items-center">
+                    <AlertDialogTitle className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                       <span>Add a server</span>
                       <Select 
                         onValueChange={(value) => {
@@ -729,13 +729,13 @@ export default function Dashboard() {
                         <TabsList className="w-full">
                           <TabsTrigger value="general">General</TabsTrigger>
                           <TabsTrigger value="hardware">Hardware</TabsTrigger>
-                          <TabsTrigger value="virtualization">Virtualization</TabsTrigger>
+                          <TabsTrigger value="virtualization">Host</TabsTrigger>
                           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
                         </TabsList>
                         <TabsContent value="general">
                           <div className="space-y-4 pt-4">
-                            <div className="flex items-center gap-2">
-                              <div className="grid w-[calc(100%-52px)] items-center gap-1.5">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                              <div className="grid w-full sm:w-[calc(100%-52px)] items-center gap-1.5">
                                 <Label htmlFor="icon">Icon</Label>
                                 <div className="space-y-2">
                                   <Select value={icon} onValueChange={(value) => setIcon(value)}>
@@ -977,7 +977,7 @@ export default function Dashboard() {
                                   <p className="text-sm text-muted-foreground mb-3">
                                     To enable monitoring, you need to install Glances on your server. Here's an example Docker Compose configuration:
                                   </p>
-                                  <pre className="bg-background p-4 rounded-md text-sm">
+                                  <pre className="bg-background p-4 rounded-md text-sm overflow-x-auto">
                                     <code>{`services:
   glances:
     image: nicolargo/glances:latest
@@ -1340,7 +1340,7 @@ export default function Dashboard() {
                                                                 <Pencil className="h-4 w-4" />
                                                               </Button>
                                                             </AlertDialogTrigger>
-                                                            <AlertDialogContent>
+                                                            <AlertDialogContent className="max-w-[95vw] w-[600px] max-h-[90vh] overflow-y-auto">
                                                               <AlertDialogHeader>
                                                                 <AlertDialogTitle>Edit VM</AlertDialogTitle>
                                                                 <AlertDialogDescription>
@@ -1349,7 +1349,7 @@ export default function Dashboard() {
                                                                       <TabsTrigger value="general">General</TabsTrigger>
                                                                       <TabsTrigger value="hardware">Hardware</TabsTrigger>
                                                                       <TabsTrigger value="virtualization">
-                                                                        Virtualization
+                                                                        Host
                                                                       </TabsTrigger>
                                                                     </TabsList>
                                                                     <TabsContent value="general">
@@ -1749,7 +1749,7 @@ export default function Dashboard() {
                                 Hidden Trigger
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="max-w-[95vw] w-[600px] max-h-[90vh] overflow-y-auto">
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Edit {server.name}</AlertDialogTitle>
                                 <AlertDialogDescription>
@@ -1757,7 +1757,7 @@ export default function Dashboard() {
                                     <TabsList className="w-full">
                                       <TabsTrigger value="general">General</TabsTrigger>
                                       <TabsTrigger value="hardware">Hardware</TabsTrigger>
-                                      <TabsTrigger value="virtualization">Virtualization</TabsTrigger>
+                                      <TabsTrigger value="virtualization">Host</TabsTrigger>
                                       <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="general">
