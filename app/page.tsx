@@ -14,8 +14,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {useTranslations} from 'next-intl';
 
 export default function Home() {
+  const t = useTranslations('Home');
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
@@ -75,20 +77,20 @@ export default function Home() {
             </div>
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-foreground">CoreControl</h1>
-          <p className="text-muted-foreground">Sign in to access your dashboard</p>
+          <p className="text-muted-foreground">{t('LoginCardDescription')}</p>
         </div>
 
         <Card className="border-muted/40 shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-semibold">Login</CardTitle>
-            <CardDescription>Enter your credentials to continue</CardDescription>
+            <CardTitle className="text-2xl font-semibold">{t('LoginCardTitle')}</CardTitle>
+            <CardDescription>{t('LoginCardDescription')}</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-4">
             {errorVisible && (
               <Alert variant="destructive" className="animate-in fade-in-50 slide-in-from-top-5">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Authentication Error</AlertTitle>
+                <AlertTitle>{t('AuthenticationError')}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -96,7 +98,7 @@ export default function Home() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email
+                  {t('Email')}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -116,7 +118,7 @@ export default function Home() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password" className="text-sm font-medium">
-                    Password
+                    {t('Password')}
                   </Label>
                 </div>
                 <div className="relative">
@@ -138,7 +140,7 @@ export default function Home() {
 
           <CardFooter className="flex flex-col space-y-4">
             <Button className="w-full" onClick={login} disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? t('SigninButtonSigningIn') : t('SigninButton')}
             </Button>
           </CardFooter>
         </Card>

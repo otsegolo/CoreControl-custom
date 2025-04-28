@@ -1,0 +1,12 @@
+{
+    "Home": {
+        "TitleUnder": "Dashboard to manage your entire server infrastructure",
+        "LoginCardTitle": "Login",
+        "LoginCardDescription": "Enter your credentials to continue",
+        "AuthenticationError": "Authentication Error",
+        "Email": "Email",
+        "Password": "Password",
+        "SigninButton": "Sign in",
+        "SigninButtonSigningIn": "Signing in..."
+    }
+}
