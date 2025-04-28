@@ -27,6 +27,7 @@ import {
   LucideServer,
   Copy,
   History,
+  Thermometer,
 } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -100,6 +101,8 @@ interface Server {
   history?: ServerHistory;
   port: number;
   uptime: string; 
+  gpuUsage?: number;
+  temp?: number;
 }
 
 interface GetServersResponse {
@@ -1116,14 +1119,14 @@ export default function Dashboard() {
 
                                     <div className="col-span-full">
                                       <h4 className="text-sm font-semibold mb-3">Resource Usage</h4>
-                                      <div className={`${!isGridLayout ? "grid grid-cols-[1fr_1fr_1fr_auto] gap-4" : "space-y-3"}`}>
+                                      <div className="grid grid-cols-2 gap-4">
                                         <div>
                                           <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                               <Cpu className="h-4 w-4 text-muted-foreground" />
                                               <span className="text-sm font-medium">CPU</span>
                                             </div>
-                                            <span className="text-xs font-medium">{server.cpuUsage || 0}%</span>
+                                            <span className="text-xs font-medium">{server.cpuUsage !== null && server.cpuUsage !== undefined ? `${server.cpuUsage}%` : "NO DATA"}</span>
                                           </div>
                                           <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
                                             <div
@@ -1139,7 +1142,7 @@ export default function Dashboard() {
                                               <MemoryStick className="h-4 w-4 text-muted-foreground" />
                                               <span className="text-sm font-medium">RAM</span>
                                             </div>
-                                            <span className="text-xs font-medium">{server.ramUsage || 0}%</span>
+                                            <span className="text-xs font-medium">{server.ramUsage !== null && server.ramUsage !== undefined ? `${server.ramUsage}%` : "NO DATA"}</span>
                                           </div>
                                           <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
                                             <div
@@ -1155,7 +1158,7 @@ export default function Dashboard() {
                                               <HardDrive className="h-4 w-4 text-muted-foreground" />
                                               <span className="text-sm font-medium">Disk</span>
                                             </div>
-                                            <span className="text-xs font-medium">{server.diskUsage || 0}%</span>
+                                            <span className="text-xs font-medium">{server.diskUsage !== null && server.diskUsage !== undefined ? `${server.diskUsage}%` : "NO DATA"}</span>
                                           </div>
                                           <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
                                             <div
@@ -1163,6 +1166,38 @@ export default function Dashboard() {
                                               style={{ width: `${server.diskUsage || 0}%` }}
                                             />
                                           </div>
+                                        </div>
+
+                                        <div>
+                                          <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                              <Microchip className="h-4 w-4 text-muted-foreground" />
+                                              <span className="text-sm font-medium">GPU</span>
+                                            </div>
+                                            <span className="text-xs font-medium">{server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage !== 0 ? `${server.gpuUsage}%` : "NO DATA"}</span>
+                                          </div>
+                                          <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
+                                            <div
+                                              className={`h-full ${server.gpuUsage && server.gpuUsage > 80 ? "bg-destructive" : server.gpuUsage && server.gpuUsage > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                                              style={{ width: `${server.gpuUsage || 0}%` }}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="mt-4">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <Thermometer className="h-4 w-4 text-muted-foreground" />
+                                            <span className="text-sm font-medium">Temp</span>
+                                          </div>
+                                          <span className="text-xs font-medium">{server.temp !== null && server.temp !== undefined && server.temp !== 0 ? `${server.temp}°C` : "NO DATA"}</span>
+                                        </div>
+                                        <div className="h-2 w-full overflow-hidden rounded-full bg-secondary mt-1">
+                                          <div
+                                            className={`h-full ${server.temp && server.temp > 80 ? "bg-destructive" : server.temp && server.temp > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                                            style={{ width: `${Math.min(server.temp || 0, 100)}%` }}
+                                          />
                                         </div>
                                       </div>
                                     </div>
