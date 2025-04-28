@@ -1,4 +1,15 @@
 {
+    "Sidebar": {
+        "Main Navigation": "Main Navigation",
+        "Dashboard": "Dashboard",
+        "My Infrastructure": "My Infrastructure",
+        "Servers": "Servers",
+        "Applications": "Applications",
+        "Uptime": "Uptime",
+        "Network": "Network",
+        "Settings": "Settings",
+        "Logout": "Logout"
+    },
     "Home": {
         "TitleUnder": "Dashboard to manage your entire server infrastructure",
         "LoginCardTitle": "Login",

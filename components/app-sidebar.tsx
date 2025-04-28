@@ -37,7 +37,7 @@ import { useRouter } from "next/navigation"
 import packageJson from "@/package.json"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-
+import { useTranslations } from "next-intl"
 interface NavItem {
   title: string
   icon?: React.ComponentType<any>
@@ -46,49 +46,52 @@ interface NavItem {
   items?: NavItem[]
 }
 
-const data: { navMain: NavItem[] } = {
+
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const t = useTranslations('Sidebar')
+  const data: { navMain: NavItem[] } = {
   navMain: [
     {
-      title: "Dashboard",
+      title: t('Dashboard'),
       icon: LayoutDashboardIcon,
       url: "/dashboard",
     },
     {
-      title: "My Infrastructure",
+      title: t('My Infrastructure'),
       url: "#",
       icon: Briefcase,
       items: [
         {
-          title: "Servers",
+          title: t('Servers'),
           icon: Server,
           url: "/dashboard/servers",
         },
         {
-          title: "Applications",
+          title: t('Applications'),
           icon: AppWindow,
           url: "/dashboard/applications",
         },
         {
-          title: "Uptime",
+          title: t('Uptime'),
           icon: Activity,
           url: "/dashboard/uptime",
         },
         {
-          title: "Network",
+          title: t('Network'),
           icon: Network,
           url: "/dashboard/network",
         },
       ],
     },
     {
-      title: "Settings",
+      title: t('Settings'),
       icon: Settings,
       url: "/dashboard/settings",
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -132,7 +135,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="flex flex-col h-full py-4">
         <SidebarGroup className="flex-grow">
           <SidebarGroupLabel className="text-xs font-medium text-sidebar-foreground/60 uppercase tracking-wider px-4 mb-2">
-            Main Navigation
+            {t('Main Navigation')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -197,7 +200,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick={logout}
           >
             <LogOut className="h-4 w-4 mr-2" />
-            Logout
+            {t('Logout')}
           </Button>
         </SidebarFooter>
       </SidebarContent>
