@@ -498,7 +498,7 @@ export default function Dashboard() {
                       <Plus />
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+                  <AlertDialogContent className="max-w-[90vw] w-[600px] max-h-[90vh] overflow-y-auto">
                     <AlertDialogHeader>
                       <AlertDialogTitle>Add an application</AlertDialogTitle>
                       <AlertDialogDescription>
@@ -761,7 +761,7 @@ export default function Dashboard() {
                                       <Pencil className="h-4 w-4" />
                                     </Button>
                                   </AlertDialogTrigger>
-                                  <AlertDialogContent>
+                                  <AlertDialogContent className="max-w-[90vw] w-[600px] max-h-[90vh] overflow-y-auto">
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>
                                         Edit Application
@@ -961,7 +961,7 @@ export default function Dashboard() {
                                   <Pencil className="h-4 w-4" />
                                 </Button>
                               </AlertDialogTrigger>
-                              <AlertDialogContent>
+                              <AlertDialogContent className="max-w-[90vw] w-[600px] max-h-[90vh] overflow-y-auto">
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>
                                     Edit Application
