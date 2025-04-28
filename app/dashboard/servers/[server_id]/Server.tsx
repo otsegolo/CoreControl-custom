@@ -30,6 +30,8 @@ interface ServerHistory {
     ram: (number | null)[];
     disk: (number | null)[];
     online: (boolean | null)[];
+    gpu: (number | null)[];
+    temp: (number | null)[];
   }
 }
 
@@ -54,6 +56,8 @@ interface Server {
   cpuUsage: number;
   ramUsage: number;
   diskUsage: number;
+  gpuUsage: number;
+  temp: number;
   history?: ServerHistory;
   port: number;
   uptime?: string;
@@ -75,6 +79,8 @@ export default function ServerDetail() {
   const cpuChartRef = { current: null as Chart | null }
   const ramChartRef = { current: null as Chart | null }
   const diskChartRef = { current: null as Chart | null }
+  const gpuChartRef = { current: null as Chart | null }
+  const tempChartRef = { current: null as Chart | null }
 
   const fetchServerDetails = async () => {
     try {
@@ -105,6 +111,8 @@ export default function ServerDetail() {
     if (cpuChartRef.current) cpuChartRef.current.destroy();
     if (ramChartRef.current) ramChartRef.current.destroy();
     if (diskChartRef.current) diskChartRef.current.destroy();
+    if (gpuChartRef.current) gpuChartRef.current.destroy();
+    if (tempChartRef.current) tempChartRef.current.destroy();
 
     // Wait for DOM to be ready
     const initTimer = setTimeout(() => {
@@ -339,6 +347,105 @@ export default function ServerDetail() {
           }
         })
       }
+
+      const gpuCanvas = document.getElementById(`gpu-chart`) as HTMLCanvasElement
+      if (gpuCanvas) {
+        gpuChartRef.current = new Chart(gpuCanvas, {
+          type: 'line',
+          data: {
+            labels: timeLabels,
+            datasets: [{
+              label: 'GPU Usage',
+              data: history.datasets.gpu,
+              borderColor: 'rgb(255, 99, 132)',
+              backgroundColor: 'rgba(255, 99, 132, 0.1)',
+              fill: true,
+              spanGaps: false
+            }]
+          },
+          options: {
+            ...commonOptions,
+            plugins: {
+              title: {
+                display: true,
+                text: 'GPU Usage History',
+                font: {
+                  size: 14
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  title: function(tooltipItems: any) {
+                    return timeLabels[tooltipItems[0].dataIndex];
+                  }
+                }
+              },
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              ...commonOptions.scales,
+              y: {
+                ...commonOptions.scales.y,
+                max: 100
+              }
+            }
+          }
+        })
+      }
+
+      const tempCanvas = document.getElementById(`temp-chart`) as HTMLCanvasElement
+      if (tempCanvas) {
+        tempChartRef.current = new Chart(tempCanvas, {
+          type: 'line',
+          data: {
+            labels: timeLabels,
+            datasets: [{
+              label: 'Temperature',
+              data: history.datasets.temp,
+              borderColor: 'rgb(255, 159, 64)',
+              backgroundColor: 'rgba(255, 159, 64, 0.1)',
+              fill: true,
+              spanGaps: false
+            }]
+          },
+          options: {
+            ...commonOptions,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Temperature History',
+                font: {
+                  size: 14
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  title: function(tooltipItems: any) {
+                    return timeLabels[tooltipItems[0].dataIndex];
+                  }
+                }
+              },
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              ...commonOptions.scales,
+              y: {
+                ...commonOptions.scales.y,
+                max: 100,
+                ticks: {
+                  callback: function(value: any) {
+                    return value + '°C';
+                  }
+                }
+              }
+            }
+          }
+        })
+      }
     }, 100);
     
     return () => {
@@ -346,6 +453,8 @@ export default function ServerDetail() {
       if (cpuChartRef.current) cpuChartRef.current.destroy();
       if (ramChartRef.current) ramChartRef.current.destroy();
       if (diskChartRef.current) diskChartRef.current.destroy();
+      if (gpuChartRef.current) gpuChartRef.current.destroy();
+      if (tempChartRef.current) tempChartRef.current.destroy();
     };
   }, [server, timeRange]);
 
@@ -496,7 +605,7 @@ export default function ServerDetail() {
                                 style={{ width: `${server.cpuUsage}%` }}
                               />
                             </div>
-                            <span>{server.cpuUsage}%</span>
+                            <span>{server.cpuUsage !== null && server.cpuUsage !== undefined ? `${server.cpuUsage}%` : "NO DATA"}</span>
                           </div>
                           <div className="text-muted-foreground">RAM Usage:</div>
                           <div className="flex items-center gap-2">
@@ -506,7 +615,7 @@ export default function ServerDetail() {
                                 style={{ width: `${server.ramUsage}%` }}
                               />
                             </div>
-                            <span>{server.ramUsage}%</span>
+                            <span>{server.ramUsage !== null && server.ramUsage !== undefined ? `${server.ramUsage}%` : "NO DATA"}</span>
                           </div>
                           <div className="text-muted-foreground">Disk Usage:</div>
                           <div className="flex items-center gap-2">
@@ -516,7 +625,27 @@ export default function ServerDetail() {
                                 style={{ width: `${server.diskUsage}%` }}
                               />
                             </div>
-                            <span>{server.diskUsage}%</span>
+                            <span>{server.diskUsage !== null && server.diskUsage !== undefined ? `${server.diskUsage}%` : "NO DATA"}</span>
+                          </div>
+                          <div className="text-muted-foreground">GPU Usage:</div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full ${server.gpuUsage && server.gpuUsage > 80 ? "bg-destructive" : server.gpuUsage && server.gpuUsage > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                                style={{ width: `${server.gpuUsage || 0}%` }}
+                              />
+                            </div>
+                            <span>{server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage !== 0 ? `${server.gpuUsage}%` : "NO DATA"}</span>
+                          </div>
+                          <div className="text-muted-foreground">Temperature:</div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full ${server.temp && server.temp > 80 ? "bg-destructive" : server.temp && server.temp > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                                style={{ width: `${Math.min(server.temp || 0, 100)}%` }}
+                              />
+                            </div>
+                            <span>{server.temp !== null && server.temp !== undefined && server.temp !== 0 ? `${server.temp}°C` : "NO DATA"}</span>
                           </div>
                         </div>
                       </div>
@@ -569,6 +698,12 @@ export default function ServerDetail() {
                           </div>
                           <div className="h-[200px] relative bg-background">
                             <canvas id="disk-chart" />
+                          </div>
+                          <div className="h-[200px] relative bg-background">
+                            <canvas id="gpu-chart" />
+                          </div>
+                          <div className="h-[200px] relative bg-background">
+                            <canvas id="temp-chart" />
                           </div>
                         </div>
                     </CardContent>
