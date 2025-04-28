@@ -8,5 +8,33 @@
         "Password": "Password",
         "SigninButton": "Sign in",
         "SigninButtonSigningIn": "Signing in..."
+    },
+    "Dashboard": {
+        "Title": "Dashboard",
+        "Servers": {
+            "Title": "Servers",
+            "Description": "Physical and virtual servers overview",
+            "PhysicalServers": "Physical Servers",
+            "VirtualServers": "Virtual Servers",
+            "ManageServers": "Manage Servers"
+        },
+        "Applications": {
+            "Title": "Applications",
+            "Description": "Manage your deployed applications",
+            "OnlineApplications": "Running Applications",
+            "ViewAllApplications": "View all applications"
+        },
+        "Uptime": {
+            "Title": "Uptime",
+            "Description": "Monitor your service availability",
+            "OnlineApplications": "Online Applications",
+            "ViewUptimeMetrics": "View uptime metrics"
+        },
+        "Network": {
+            "Title": "Network",
+            "Description": "Manage network configuration",
+            "ActiveConnections": "Active Connections",
+            "ViewNetworkDetails": "View network details"
+        }
     }
 }
