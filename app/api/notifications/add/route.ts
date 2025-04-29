@@ -21,12 +21,14 @@ interface AddRequest {
     pushoverUrl?: string;
     pushoverToken?: string;
     pushoverUser?: string;
+    echobellURL?: string;
+    echobellData?: string;
 }
 
 export async function POST(request: NextRequest) {
     try {
         const body: AddRequest = await request.json();
-        const { type, name, smtpHost, smtpPort, smtpSecure, smtpUsername, smtpPassword, smtpFrom, smtpTo, telegramToken, telegramChatId, discordWebhook, gotifyUrl, gotifyToken, ntfyUrl, ntfyToken, pushoverUrl, pushoverToken, pushoverUser } = body; 
+        const { type, name, smtpHost, smtpPort, smtpSecure, smtpUsername, smtpPassword, smtpFrom, smtpTo, telegramToken, telegramChatId, discordWebhook, gotifyUrl, gotifyToken, ntfyUrl, ntfyToken, pushoverUrl, pushoverToken, pushoverUser, echobellURL, echobellData } = body; 
         
         const notification = await prisma.notification.create({
             data: {
@@ -49,6 +51,8 @@ export async function POST(request: NextRequest) {
                 pushoverUrl: pushoverUrl,
                 pushoverToken: pushoverToken,
                 pushoverUser: pushoverUser,
+                echobellURL: echobellURL,
+                echobellData: echobellData,
             }
         });
 
