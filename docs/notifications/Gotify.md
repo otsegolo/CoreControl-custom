@@ -1,5 +1,3 @@
-# Gotify
-
 # Gotify Notification Setup
 
 To enable Gotify notifications, you need the following information from your Gotify server:
