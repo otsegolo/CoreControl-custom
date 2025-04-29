@@ -542,10 +542,16 @@ export default function Dashboard() {
                           </div>
                           <div className="grid w-full items-center gap-1.5">
                             <Label>{t('Applications.Add.IconURL')}</Label>
-                            <Input
-                              placeholder={t('Applications.Add.IconURLPlaceholder')}
-                              onChange={(e) => setIcon(e.target.value)}
+                            <div className="flex gap-2">
+                              <Input
+                                placeholder={t('Applications.Add.IconURLPlaceholder')}
+                                onChange={(e) => setIcon(e.target.value)}
+                                value={icon}
                             />
+                            <Button variant="outline" size="icon" onClick={generateIconURL}>
+                                <Zap />
+                              </Button>
+                            </div>
                           </div>
                           <div className="grid w-full items-center gap-1.5">
                             <Label>{t('Applications.Add.PublicURL')}</Label>
