@@ -16,8 +16,10 @@ import {
 import { ReactFlow, Controls, Background, ConnectionLineType } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function Dashboard() {
+  const t = useTranslations();
   const [nodes, setNodes] = useState<any[]>([]);
   const [edges, setEdges] = useState<any[]>([]);
 
@@ -58,13 +60,13 @@ export default function Dashboard() {
                 <BreadcrumbSeparator className="hidden md:block dark:text-slate-500" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="dark:text-slate-300">
-                    My Infrastructure
+                    {t('Network.Breadcrumb.MyInfrastructure')}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block dark:text-slate-500" />
                 <BreadcrumbItem>
                   <BreadcrumbPage className="dark:text-slate-300">
-                    Network
+                    {t('Network.Breadcrumb.Network')}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
