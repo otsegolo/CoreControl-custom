@@ -83,7 +83,6 @@ export default function Settings() {
   const [pushoverToken, setPushoverToken] = useState<string>("")
   const [pushoverUser, setPushoverUser] = useState<string>("")
   const [echobellURL, setEchobellURL] = useState<string>("")
-  const [echobellData, setEchobellData] = useState<string>("")
   const [language, setLanguage] = useState<string>("english")
   const [notifications, setNotifications] = useState<any[]>([])
 
@@ -193,7 +192,6 @@ export default function Settings() {
         pushoverToken: pushoverToken,
         pushoverUser: pushoverUser,
         echobellURL: echobellURL,
-        echobellData: echobellData,
       })
       getNotifications()
     } catch (error: any) {
@@ -701,17 +699,7 @@ export default function Settings() {
                                     onChange={(e) => setEchobellURL(e.target.value)}
                                   />
                                 </div>
-                                <div className="grid w-full items-center gap-1.5">
-                                  <Label>{t('Settings.Notifications.AddNotification.Echobell.Data')}</Label>
-                                  <Textarea
-                                    placeholder={`e.g.:
-"title": "Server Status",
-"message": "Server is online"
-`}
-                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEchobellData(e.target.value)}
-                                    rows={4}
-                                  />
-                                </div>
+                               <span className="text-xs text-muted-foreground">Add in Echobell the "message" field.</span>
                               </div>
                             )}
                             

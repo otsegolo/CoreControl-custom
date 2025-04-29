@@ -384,8 +384,7 @@
           },
           "Echobell": {
             "Title": "Echobell",
-            "Url": "Echobell URL",
-            "Data": "Echobell Data"
+            "Url": "Echobell URL"
           }
         },
         "CustomizeText": {

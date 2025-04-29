@@ -86,7 +86,7 @@ func LoadNotifications(db *sql.DB) ([]models.Notification, error) {
 	rows, err := db.Query(
 		`SELECT id, enabled, type, "smtpHost", "smtpPort", "smtpFrom", "smtpUser", "smtpPass", "smtpSecure", "smtpTo",
 		       "telegramChatId", "telegramToken", "discordWebhook", "gotifyUrl", "gotifyToken", "ntfyUrl", "ntfyToken",
-			   "pushoverUrl", "pushoverToken", "pushoverUser"
+			   "pushoverUrl", "pushoverToken", "pushoverUser", "echobellUrl"
 		FROM notification
 		WHERE enabled = true`,
 	)
@@ -103,7 +103,7 @@ func LoadNotifications(db *sql.DB) ([]models.Notification, error) {
 			&n.SMTPHost, &n.SMTPPort, &n.SMTPFrom, &n.SMTPUser, &n.SMTPPass, &n.SMTPSecure, &n.SMTPTo,
 			&n.TelegramChatID, &n.TelegramToken, &n.DiscordWebhook,
 			&n.GotifyUrl, &n.GotifyToken, &n.NtfyUrl, &n.NtfyToken,
-			&n.PushoverUrl, &n.PushoverToken, &n.PushoverUser,
+			&n.PushoverUrl, &n.PushoverToken, &n.PushoverUser, &n.EchobellURL,
 		); err != nil {
 			fmt.Printf("Error scanning notification: %v\n", err)
 			continue

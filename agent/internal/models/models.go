@@ -94,4 +94,5 @@ type Notification struct {
 	PushoverUrl    sql.NullString
 	PushoverToken  sql.NullString
 	PushoverUser   sql.NullString
+	EchobellURL    sql.NullString
 }
