@@ -15,12 +15,12 @@ import (
 	"github.com/corecontrol/agent/internal/notifications"
 )
 
-// notificationState tracks the last notification time for each server
+// notificationState tracks the last known status for each server
 var notificationState = struct {
 	sync.RWMutex
-	lastNotification map[int]time.Time
+	lastStatus map[int]bool
 }{
-	lastNotification: make(map[int]time.Time),
+	lastStatus: make(map[int]bool),
 }
 
 // MonitorServers checks and updates the status of all servers
@@ -108,17 +108,16 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 	}
 }
 
-// shouldSendNotification checks if a notification should be sent based on cooldown period
+// shouldSendNotification checks if a notification should be sent based on status change
 func shouldSendNotification(serverID int, online bool) bool {
 	notificationState.Lock()
 	defer notificationState.Unlock()
 
-	lastNotif, exists := notificationState.lastNotification[serverID]
-	now := time.Now()
+	lastStatus, exists := notificationState.lastStatus[serverID]
 
-	// If no previous notification or more than 5 minutes have passed
-	if !exists || now.Sub(lastNotif) > 5*time.Minute {
-		notificationState.lastNotification[serverID] = now
+	// If this is the first check or status has changed
+	if !exists || lastStatus != online {
+		notificationState.lastStatus[serverID] = online
 		return true
 	}
 
