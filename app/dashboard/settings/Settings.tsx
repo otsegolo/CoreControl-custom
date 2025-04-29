@@ -664,7 +664,6 @@ export default function Settings() {
                                   <Label>{t('Settings.Notifications.AddNotification.Pushover.Url')}</Label>
                                   <Input
                                     type="text"
-                                    placeholder={t('Settings.Notifications.AddNotification.Pushover.UrlPlaceholder')}
                                     onChange={(e) => setPushoverUrl(e.target.value)}
                                   />
                                 </div>
@@ -673,7 +672,6 @@ export default function Settings() {
                                   <Label>{t('Settings.Notifications.AddNotification.Pushover.Token')}</Label>
                                   <Input
                                     type="text"
-                                    placeholder={t('Settings.Notifications.AddNotification.Pushover.TokenPlaceholder')}
                                     onChange={(e) => setPushoverToken(e.target.value)}
                                   />
                                 </div>
@@ -682,7 +680,6 @@ export default function Settings() {
                                   <Label>{t('Settings.Notifications.AddNotification.Pushover.User')}</Label>
                                   <Input
                                     type="text"
-                                    placeholder={t('Settings.Notifications.AddNotification.Pushover.UserPlaceholder')}
                                     onChange={(e) => setPushoverUser(e.target.value)}
                                   />
                                 </div>
