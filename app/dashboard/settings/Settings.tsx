@@ -19,7 +19,7 @@ import axios from "axios"
 import Cookies from "js-cookie"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, Check, Palette, User, Bell, AtSign, Send, MessageSquare, Trash2, Play } from "lucide-react"
+import { AlertCircle, Check, Palette, User, Bell, AtSign, Send, MessageSquare, Trash2, Play, Languages } from "lucide-react"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 
@@ -447,7 +447,7 @@ export default function Settings() {
             <Card className="overflow-hidden border-2 border-muted/20 shadow-sm">
               <CardHeader className="bg-muted/10 px-6 py-4 border-b">
                 <div className="flex items-center gap-2">
-                  <Palette className="h-5 w-5 text-primary" />
+                  <Languages className="h-5 w-5 text-primary" />
                   <h2 className="text-xl font-semibold">{t('Settings.LanguageSettings.Title')}</h2>
                 </div>
               </CardHeader>
