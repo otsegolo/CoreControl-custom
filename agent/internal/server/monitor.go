@@ -8,11 +8,20 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/corecontrol/agent/internal/models"
 	"github.com/corecontrol/agent/internal/notifications"
 )
+
+// notificationState tracks the last notification time for each server
+var notificationState = struct {
+	sync.RWMutex
+	lastNotification map[int]time.Time
+}{
+	lastNotification: make(map[int]time.Time),
+}
 
 // MonitorServers checks and updates the status of all servers
 func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, notifSender *notifications.NotificationSender) {
@@ -39,7 +48,9 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		online, cpuUsage = fetchCPUUsage(client, baseURL, logPrefix)
 		if !online {
 			updateServerStatus(db, server.ID, false, 0, 0, 0, 0, 0, "")
-			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			if shouldSendNotification(server.ID, online) {
+				sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			}
 			addServerHistoryEntry(db, server.ID, false, 0, 0, 0, 0, 0)
 			continue
 		}
@@ -52,7 +63,9 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		if !memOnline {
 			online = false
 			updateServerStatus(db, server.ID, false, 0, 0, 0, 0, 0, "")
-			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			if shouldSendNotification(server.ID, online) {
+				sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			}
 			addServerHistoryEntry(db, server.ID, false, 0, 0, 0, 0, 0)
 			continue
 		}
@@ -63,7 +76,9 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		if !diskOnline {
 			online = false
 			updateServerStatus(db, server.ID, false, 0, 0, 0, 0, 0, "")
-			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			if shouldSendNotification(server.ID, online) {
+				sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			}
 			addServerHistoryEntry(db, server.ID, false, 0, 0, 0, 0, 0)
 			continue
 		}
@@ -78,7 +93,7 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		temp = tempVal
 
 		// Check if status changed and send notification if needed
-		if online != server.Online {
+		if online != server.Online && shouldSendNotification(server.ID, online) {
 			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
 		}
 
@@ -91,6 +106,23 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		fmt.Printf("%s Updated - CPU: %.2f%%, RAM: %.2f%%, Disk: %.2f%%, GPU: %.2f%%, Temp: %.2f°C, Uptime: %s\n",
 			logPrefix, cpuUsage, ramUsage, diskUsage, gpuUsage, temp, uptimeStr)
 	}
+}
+
+// shouldSendNotification checks if a notification should be sent based on cooldown period
+func shouldSendNotification(serverID int, online bool) bool {
+	notificationState.Lock()
+	defer notificationState.Unlock()
+
+	lastNotif, exists := notificationState.lastNotification[serverID]
+	now := time.Now()
+
+	// If no previous notification or more than 5 minutes have passed
+	if !exists || now.Sub(lastNotif) > 5*time.Minute {
+		notificationState.lastNotification[serverID] = now
+		return true
+	}
+
+	return false
 }
 
 // Helper function to fetch CPU usage
