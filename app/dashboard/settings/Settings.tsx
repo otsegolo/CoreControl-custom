@@ -22,6 +22,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, Check, Palette, User, Bell, AtSign, Send, MessageSquare, Trash2, Play, Languages } from "lucide-react"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
+import { Textarea } from "@/components/ui/textarea"
 
 import {
   AlertDialog,
@@ -35,7 +36,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
 import { useTranslations } from "next-intl"
 
 interface NotificationsResponse {
@@ -82,6 +82,8 @@ export default function Settings() {
   const [pushoverUrl, setPushoverUrl] = useState<string>("")
   const [pushoverToken, setPushoverToken] = useState<string>("")
   const [pushoverUser, setPushoverUser] = useState<string>("")
+  const [echobellURL, setEchobellURL] = useState<string>("")
+  const [echobellData, setEchobellData] = useState<string>("")
   const [language, setLanguage] = useState<string>("english")
   const [notifications, setNotifications] = useState<any[]>([])
 
@@ -190,6 +192,8 @@ export default function Settings() {
         pushoverUrl: pushoverUrl,
         pushoverToken: pushoverToken,
         pushoverUser: pushoverUser,
+        echobellURL: echobellURL,
+        echobellData: echobellData,
       })
       getNotifications()
     } catch (error: any) {
@@ -514,6 +518,7 @@ export default function Settings() {
                               <SelectItem value="gotify">{t('Settings.Notifications.AddNotification.Gotify.Title')}</SelectItem>
                               <SelectItem value="ntfy">{t('Settings.Notifications.AddNotification.Ntfy.Title')}</SelectItem>
                               <SelectItem value="pushover">{t('Settings.Notifications.AddNotification.Pushover.Title')}</SelectItem>
+                              <SelectItem value="echobell">{t('Settings.Notifications.AddNotification.Echobell.Title')}</SelectItem>
                             </SelectContent>
 
                             {notificationType === "smtp" && (
@@ -685,6 +690,31 @@ export default function Settings() {
                                 </div>
                               </div>
                             )}
+
+                            {notificationType === "echobell" && (
+                              <div className="mt-4 flex flex-col gap-2">
+                                <div className="grid w-full items-center gap-1.5">
+                                  <Label>{t('Settings.Notifications.AddNotification.Echobell.Url')}</Label>
+                                  <Input
+                                    type="text"
+                                    placeholder="e.g. https://hook.echobell.one/t/xxx"
+                                    onChange={(e) => setEchobellURL(e.target.value)}
+                                  />
+                                </div>
+                                <div className="grid w-full items-center gap-1.5">
+                                  <Label>{t('Settings.Notifications.AddNotification.Echobell.Data')}</Label>
+                                  <Textarea
+                                    placeholder={`e.g.:
+"title": "Server Status",
+"message": "Server is online"
+`}
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEchobellData(e.target.value)}
+                                    rows={4}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                            
                           </Select>
                         </div>
                       </AlertDialogDescription>

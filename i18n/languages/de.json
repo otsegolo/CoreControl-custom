@@ -381,6 +381,11 @@
             "Url": "Pushover-URL",
             "Token": "Pushover-Token",
             "User": "Pushover-Benutzer"
+          },
+          "Echobell": {
+            "Title": "Echobell",
+            "Url": "Echobell-URL",
+            "Data": "Echobell-Data"
           }
         },
         "CustomizeText": {
