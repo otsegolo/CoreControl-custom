@@ -9,6 +9,25 @@
       "since": "since {date}",
       "notSet": "Not set",
       "noData": "No data",
+      "Loading": "Loading...",
+      "Refresh": "Refresh",
+      "Server": {
+        "CPU": "CPU",
+        "GPU": "GPU",
+        "RAM": "RAM",
+        "Disk": "Disk",
+        "OS": "OS",
+        "IP": "IP",
+        "Host": "Host",
+        "Temperature": "Temperature",
+        "Usage": "Usage",
+        "Tabs": {
+            "General": "General",
+            "Hardware": "Hardware",
+            "Host": "Host",
+            "Monitoring": "Monitoring"
+        }
+      },
       "ItemsPerPage": {
         "items": "items",
         "item": "item",
@@ -19,23 +38,30 @@
         "20": "20 items",
         "25": "25 items",
         "Custom": "Custom (1-100)"
-      },
-      "Server": {
-        "CPU": "CPU",
-        "GPU": "GPU",
-        "RAM": "RAM",
-        "Disk": "Disk",
-        "OS": "OS",
-        "IP": "IP",
-        "Host": "Host",
-        "Temperature": "Temperature",
-        "Tabs": {
-            "General": "General",
-            "Hardware": "Hardware",
-            "Host": "Host",
-            "Monitoring": "Monitoring"
-        }
       }
+    },
+    "Server": {
+      "Hardware": "Hardware",
+      "Network": "Network",
+      "CurrentUsage": "Current Usage",
+      "UsageHistory": "Usage History",
+      "ResourceUsageHistory": "Resource Usage History",
+      "TimeRange": {
+        "Select": "Select time range",
+        "LastHour": "Last Hour",
+        "Last24Hours": "Last 24 Hours",
+        "Last7Days": "Last 7 Days",
+        "Last30Days": "Last 30 Days"
+      },
+      "VirtualMachines": "Virtual Machines",
+      "VirtualMachinesDescription": "Virtual machines hosted on this server",
+      "HardwareInformation": "Hardware Information",
+      "ManagementURL": "Management URL",
+      "VM": "VM",
+      "Physical": "Physical",
+      "HostedOn": "Hosted on",
+      "NotFound": "Server not found",
+      "NotFoundDescription": "The server you are looking for could not be found."
     },
     "Sidebar": {
       "Main Navigation": "Main Navigation",

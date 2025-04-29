@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import NextLink from "next/link"
+import { useTranslations } from "next-intl"
 
 interface ServerHistory {
   labels: string[];
@@ -69,6 +70,7 @@ interface GetServersResponse {
 }
 
 export default function ServerDetail() {
+  const t = useTranslations()
   const params = useParams()
   const serverId = params.server_id as string
   const [server, setServer] = useState<Server | null>(null)
@@ -214,7 +216,7 @@ export default function ServerDetail() {
           data: {
             labels: timeLabels,
             datasets: [{
-              label: 'CPU Usage',
+              label: t('Common.Server.CPU') + ' ' + t('Common.Server.Usage'),
               data: history.datasets.cpu,
               borderColor: 'rgb(75, 192, 192)',
               backgroundColor: 'rgba(75, 192, 192, 0.1)',
@@ -227,7 +229,7 @@ export default function ServerDetail() {
             plugins: {
               title: {
                 display: true,
-                text: 'CPU Usage History',
+                text: t('Common.Server.CPU') + ' ' + t('Server.UsageHistory'),
                 font: {
                   size: 14
                 }
@@ -261,7 +263,7 @@ export default function ServerDetail() {
           data: {
             labels: timeLabels,
             datasets: [{
-              label: 'RAM Usage',
+              label: t('Common.Server.RAM') + ' ' + t('Common.Server.Usage'),
               data: history.datasets.ram,
               borderColor: 'rgb(153, 102, 255)',
               backgroundColor: 'rgba(153, 102, 255, 0.1)',
@@ -274,7 +276,7 @@ export default function ServerDetail() {
             plugins: {
               title: {
                 display: true,
-                text: 'RAM Usage History',
+                text: t('Common.Server.RAM') + ' ' + t('Server.UsageHistory'),
                 font: {
                   size: 14
                 }
@@ -308,7 +310,7 @@ export default function ServerDetail() {
           data: {
             labels: timeLabels,
             datasets: [{
-              label: 'Disk Usage',
+              label: t('Common.Server.Disk') + ' ' + t('Common.Server.Usage'),
               data: history.datasets.disk,
               borderColor: 'rgb(255, 159, 64)',
               backgroundColor: 'rgba(255, 159, 64, 0.1)',
@@ -321,7 +323,7 @@ export default function ServerDetail() {
             plugins: {
               title: {
                 display: true,
-                text: 'Disk Usage History',
+                text: t('Common.Server.Disk') + ' ' + t('Server.UsageHistory'),
                 font: {
                   size: 14
                 }
@@ -355,7 +357,7 @@ export default function ServerDetail() {
           data: {
             labels: timeLabels,
             datasets: [{
-              label: 'GPU Usage',
+              label: t('Common.Server.GPU') + ' ' + t('Common.Server.Usage'),
               data: history.datasets.gpu,
               borderColor: 'rgb(255, 99, 132)',
               backgroundColor: 'rgba(255, 99, 132, 0.1)',
@@ -368,7 +370,7 @@ export default function ServerDetail() {
             plugins: {
               title: {
                 display: true,
-                text: 'GPU Usage History',
+                text: t('Common.Server.GPU') + ' ' + t('Common.Server.UsageHistory'),
                 font: {
                   size: 14
                 }
@@ -402,7 +404,7 @@ export default function ServerDetail() {
           data: {
             labels: timeLabels,
             datasets: [{
-              label: 'Temperature',
+              label: t('Common.Server.Temperature'),
               data: history.datasets.temp,
               borderColor: 'rgb(255, 159, 64)',
               backgroundColor: 'rgba(255, 159, 64, 0.1)',
@@ -415,7 +417,7 @@ export default function ServerDetail() {
             plugins: {
               title: {
                 display: true,
-                text: 'Temperature History',
+                text: t('Common.Server.TemperatureHistory'),
                 font: {
                   size: 14
                 }
@@ -478,12 +480,12 @@ export default function ServerDetail() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>My Infrastructure</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Servers.MyInfrastructure')}</BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
                   <NextLink href="/dashboard/servers" className="hover:underline">
-                    <BreadcrumbPage>Servers</BreadcrumbPage>
+                    <BreadcrumbPage>{t('Servers.Title')}</BreadcrumbPage>
                   </NextLink>
                 </BreadcrumbItem>
                 {server && (
@@ -524,7 +526,7 @@ export default function ServerDetail() {
                     </clipPath>
                   </defs>
                 </svg>
-                <span className="sr-only">Loading...</span>
+                <span className="sr-only">{t('Common.Loading')}</span>
               </div>
             </div>
           ) : server ? (
@@ -540,9 +542,9 @@ export default function ServerDetail() {
                           {server.name}
                         </CardTitle>
                         <CardDescription>
-                          {server.os || "No OS specified"} • {server.isVM ? "Virtual Machine" : "Physical Server"}
+                          {server.os || t('Common.Server.OS')} • {server.isVM ? t('Server.VM') : t('Server.Physical')}
                           {server.isVM && server.hostServer && (
-                            <> • Hosted on {server.hostedVMs?.[0]?.name}</>
+                            <> • {t('Server.HostedOn')} {server.hostedVMs?.[0]?.name}</>
                           )}
                         </CardDescription>
                       </div>
@@ -553,7 +555,7 @@ export default function ServerDetail() {
                       <StatusIndicator isOnline={server.online} />
                       {server.online && server.uptime && (
                         <span className="text-xs text-muted-foreground mt-1 w-max text-right whitespace-nowrap">
-                          since {server.uptime}
+                          {t('Common.since', { date: server.uptime })}
                         </span>
                       )}
                     </div>
@@ -562,25 +564,25 @@ export default function ServerDetail() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <h3 className="text-sm font-medium">Hardware</h3>
+                      <h3 className="text-sm font-medium">{t('Server.Hardware')}</h3>
                       <div className="grid grid-cols-[120px_1fr] text-sm gap-1">
-                        <div className="text-muted-foreground">CPU:</div>
+                        <div className="text-muted-foreground">{t('Common.Server.CPU')}:</div>
                         <div>{server.cpu || "-"}</div>
-                        <div className="text-muted-foreground">GPU:</div>
+                        <div className="text-muted-foreground">{t('Common.Server.GPU')}:</div>
                         <div>{server.gpu || "-"}</div>
-                        <div className="text-muted-foreground">RAM:</div>
+                        <div className="text-muted-foreground">{t('Common.Server.RAM')}:</div>
                         <div>{server.ram || "-"}</div>
-                        <div className="text-muted-foreground">Disk:</div>
+                        <div className="text-muted-foreground">{t('Common.Server.Disk')}:</div>
                         <div>{server.disk || "-"}</div>
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <h3 className="text-sm font-medium">Network</h3>
+                      <h3 className="text-sm font-medium">{t('Server.Network')}</h3>
                       <div className="grid grid-cols-[120px_1fr] text-sm gap-1">
-                        <div className="text-muted-foreground">IP Address:</div>
+                        <div className="text-muted-foreground">{t('Common.Server.IP')}:</div>
                         <div>{server.ip || "-"}</div>
-                        <div className="text-muted-foreground">Management URL:</div>
+                        <div className="text-muted-foreground">{t('Server.ManagementURL')}:</div>
                         <div>
                           {server.url ? (
                             <a href={server.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-500 hover:underline">
@@ -595,9 +597,9 @@ export default function ServerDetail() {
 
                     {server.monitoring && (
                       <div className="space-y-2">
-                        <h3 className="text-sm font-medium">Current Usage</h3>
+                        <h3 className="text-sm font-medium">{t('Server.CurrentUsage')}</h3>
                         <div className="grid grid-cols-[120px_1fr] text-sm gap-1">
-                          <div className="text-muted-foreground">CPU Usage:</div>
+                          <div className="text-muted-foreground">{t('Common.Server.CPU')} {t('Common.Server.Usage')}:</div>
                           <div className="flex items-center gap-2">
                             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
@@ -605,9 +607,9 @@ export default function ServerDetail() {
                                 style={{ width: `${server.cpuUsage}%` }}
                               />
                             </div>
-                            <span>{server.cpuUsage !== null && server.cpuUsage !== undefined ? `${server.cpuUsage}%` : "NO DATA"}</span>
+                            <span>{server.cpuUsage !== null && server.cpuUsage !== undefined ? `${server.cpuUsage}%` : t('Common.noData')}</span>
                           </div>
-                          <div className="text-muted-foreground">RAM Usage:</div>
+                          <div className="text-muted-foreground">{t('Common.Server.RAM')} {t('Common.Server.Usage')}:</div>
                           <div className="flex items-center gap-2">
                             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
@@ -615,9 +617,9 @@ export default function ServerDetail() {
                                 style={{ width: `${server.ramUsage}%` }}
                               />
                             </div>
-                            <span>{server.ramUsage !== null && server.ramUsage !== undefined ? `${server.ramUsage}%` : "NO DATA"}</span>
+                            <span>{server.ramUsage !== null && server.ramUsage !== undefined ? `${server.ramUsage}%` : t('Common.noData')}</span>
                           </div>
-                          <div className="text-muted-foreground">Disk Usage:</div>
+                          <div className="text-muted-foreground">{t('Common.Server.Disk')} {t('Common.Server.Usage')}:</div>
                           <div className="flex items-center gap-2">
                             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
@@ -625,34 +627,33 @@ export default function ServerDetail() {
                                 style={{ width: `${server.diskUsage}%` }}
                               />
                             </div>
-                            <span>{server.diskUsage !== null && server.diskUsage !== undefined ? `${server.diskUsage}%` : "NO DATA"}</span>
+                            <span>{server.diskUsage !== null && server.diskUsage !== undefined ? `${server.diskUsage}%` : t('Common.noData')}</span>
                           </div>
                           {server.gpuUsage && server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage.toString() !== "0" && (
                             <>
-                              <div className="text-muted-foreground">GPU Usage:</div>
+                              <div className="text-muted-foreground">{t('Common.Server.GPU')} {t('Common.Server.Usage')}:</div>
                               <div className="flex items-center gap-2">
                                 <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full ${server.gpuUsage && server.gpuUsage > 80 ? "bg-destructive" : server.gpuUsage && server.gpuUsage > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
-                                style={{ width: `${server.gpuUsage || 0}%` }}
-                              />
-                            </div>
-                            <span>
-                            {server.gpuUsage && server.gpuUsage !== null && server.gpuUsage !== undefined ? `${server.gpuUsage}%` : "NO DATA"}</span>
+                                  <div 
+                                    className={`h-full ${server.gpuUsage && server.gpuUsage > 80 ? "bg-destructive" : server.gpuUsage && server.gpuUsage > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                                    style={{ width: `${server.gpuUsage || 0}%` }}
+                                  />
+                                </div>
+                                <span>{server.gpuUsage && server.gpuUsage !== null && server.gpuUsage !== undefined ? `${server.gpuUsage}%` : t('Common.noData')}</span>
                               </div>
                             </>
                           )}
                           {server.temp && server.temp !== null && server.temp !== undefined && server.temp.toString() !== "0" && (
                             <>
-                              <div className="text-muted-foreground">Temperature:</div>
+                              <div className="text-muted-foreground">{t('Common.Server.Temperature')}:</div>
                               <div className="flex items-center gap-2">
                                 <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full ${server.temp && server.temp > 80 ? "bg-destructive" : server.temp && server.temp > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
-                                style={{ width: `${Math.min(server.temp || 0, 100)}%` }}
-                              />
-                            </div>
-                            <span>{server.temp !== null && server.temp !== undefined && server.temp !== 0 ? `${server.temp}°C` : "NO DATA"}</span>
+                                  <div 
+                                    className={`h-full ${server.temp && server.temp > 80 ? "bg-destructive" : server.temp && server.temp > 60 ? "bg-amber-500" : "bg-emerald-500"}`}
+                                    style={{ width: `${Math.min(server.temp || 0, 100)}%` }}
+                                  />
+                                </div>
+                                <span>{server.temp !== null && server.temp !== undefined && server.temp !== 0 ? `${server.temp}°C` : t('Common.noData')}</span>
                               </div>
                             </>
                           )}
@@ -670,30 +671,30 @@ export default function ServerDetail() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div>
-                          <CardTitle>Resource Usage History</CardTitle>
+                          <CardTitle>{t('Server.ResourceUsageHistory')}</CardTitle>
                           <CardDescription>
                             {timeRange === '1h' 
-                              ? 'Last hour, per minute' 
+                              ? t('Server.TimeRange.LastHour') 
                               : timeRange === '1d'
-                                ? 'Last 24 hours, 15-minute intervals'
+                                ? t('Server.TimeRange.Last24Hours')
                                 : timeRange === '7d' 
-                                  ? 'Last 7 days, hourly intervals' 
-                                  : 'Last 30 days, 4-hour intervals'}
+                                  ? t('Server.TimeRange.Last7Days') 
+                                  : t('Server.TimeRange.Last30Days')}
                           </CardDescription>
                         </div>
                         <div className="flex gap-2">
                           <Select value={timeRange} onValueChange={(value: '1h' | '1d' | '7d' | '30d') => setTimeRange(value)}>
                             <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Time range" />
+                              <SelectValue placeholder={t('Server.TimeRange.Select')} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="1h">Last Hour</SelectItem>
-                              <SelectItem value="1d">Last 24 Hours</SelectItem>
-                              <SelectItem value="7d">Last 7 Days</SelectItem>
-                              <SelectItem value="30d">Last 30 Days</SelectItem>
+                              <SelectItem value="1h">{t('Server.TimeRange.LastHour')}</SelectItem>
+                              <SelectItem value="1d">{t('Server.TimeRange.Last24Hours')}</SelectItem>
+                              <SelectItem value="7d">{t('Server.TimeRange.Last7Days')}</SelectItem>
+                              <SelectItem value="30d">{t('Server.TimeRange.Last30Days')}</SelectItem>
                             </SelectContent>
                           </Select>
-                          <Button variant="outline" onClick={refreshData}>Refresh</Button>
+                          <Button variant="outline" onClick={refreshData}>{t('Common.Refresh')}</Button>
                         </div>
                       </div>
                     </CardHeader>
@@ -728,8 +729,8 @@ export default function ServerDetail() {
               {server.hostedVMs && server.hostedVMs.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Virtual Machines</CardTitle>
-                    <CardDescription>Virtual machines hosted on this server</CardDescription>
+                    <CardTitle>{t('Server.VirtualMachines')}</CardTitle>
+                    <CardDescription>{t('Server.VirtualMachinesDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -758,7 +759,7 @@ export default function ServerDetail() {
                                 <StatusIndicator isOnline={hostedVM.online} />
                                 {hostedVM.online && hostedVM.uptime && (
                                   <span className="text-xs text-muted-foreground mt-1 w-max text-right whitespace-nowrap">
-                                    since {hostedVM.uptime}
+                                    {t('Common.since', { date: hostedVM.uptime })}
                                   </span>
                                 )}
                               </div>
@@ -773,43 +774,43 @@ export default function ServerDetail() {
                             <div className="flex items-center gap-2 text-foreground/80">
                               <MonitorCog className="h-4 w-4 text-muted-foreground" />
                               <span>
-                                <b>OS:</b> {hostedVM.os || "-"}
+                                <b>{t('Common.Server.OS')}:</b> {hostedVM.os || "-"}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-foreground/80">
                               <FileDigit className="h-4 w-4 text-muted-foreground" />
                               <span>
-                                <b>IP:</b> {hostedVM.ip || "Not set"}
+                                <b>{t('Common.Server.IP')}:</b> {hostedVM.ip || t('Common.notSet')}
                               </span>
                             </div>
                           </div>
 
                           <div className="col-span-full mb-2">
-                            <h4 className="text-sm font-semibold">Hardware Information</h4>
+                            <h4 className="text-sm font-semibold">{t('Server.HardwareInformation')}</h4>
                           </div>
 
                           <div className="flex items-center gap-2 text-foreground/80">
                             <Cpu className="h-4 w-4 text-muted-foreground" />
                             <span>
-                              <b>CPU:</b> {hostedVM.cpu || "-"}
+                              <b>{t('Common.Server.CPU')}:</b> {hostedVM.cpu || "-"}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-foreground/80">
                             <Microchip className="h-4 w-4 text-muted-foreground" />
                             <span>
-                              <b>GPU:</b> {hostedVM.gpu || "-"}
+                              <b>{t('Common.Server.GPU')}:</b> {hostedVM.gpu || "-"}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-foreground/80">
                             <MemoryStick className="h-4 w-4 text-muted-foreground" />
                             <span>
-                              <b>RAM:</b> {hostedVM.ram || "-"}
+                              <b>{t('Common.Server.RAM')}:</b> {hostedVM.ram || "-"}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-foreground/80">
                             <HardDrive className="h-4 w-4 text-muted-foreground" />
                             <span>
-                              <b>Disk:</b> {hostedVM.disk || "-"}
+                              <b>{t('Common.Server.Disk')}:</b> {hostedVM.disk || "-"}
                             </span>
                           </div>
 
@@ -824,7 +825,7 @@ export default function ServerDetail() {
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <Cpu className="h-4 w-4 text-muted-foreground" />
-                                      <span className="text-sm font-medium">CPU</span>
+                                      <span className="text-sm font-medium">{t('Common.Server.CPU')}</span>
                                     </div>
                                     <span className="text-xs font-medium">
                                       {hostedVM.cpuUsage || 0}%
@@ -842,7 +843,7 @@ export default function ServerDetail() {
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <MemoryStick className="h-4 w-4 text-muted-foreground" />
-                                      <span className="text-sm font-medium">RAM</span>
+                                      <span className="text-sm font-medium">{t('Common.Server.RAM')}</span>
                                     </div>
                                     <span className="text-xs font-medium">
                                       {hostedVM.ramUsage || 0}%
@@ -860,7 +861,7 @@ export default function ServerDetail() {
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <HardDrive className="h-4 w-4 text-muted-foreground" />
-                                      <span className="text-sm font-medium">Disk</span>
+                                      <span className="text-sm font-medium">{t('Common.Server.Disk')}</span>
                                     </div>
                                     <span className="text-xs font-medium">
                                       {hostedVM.diskUsage || 0}%
@@ -885,8 +886,8 @@ export default function ServerDetail() {
             </div>
           ) : (
             <div className="text-center p-12">
-              <h2 className="text-2xl font-bold">Server not found</h2>
-              <p className="text-muted-foreground mt-2">The requested server could not be found or you don't have permission to view it.</p>
+              <h2 className="text-2xl font-bold">{t('Server.NotFound')}</h2>
+              <p className="text-muted-foreground mt-2">{t('Server.NotFoundDescription')}</p>
             </div>
           )}
         </div>
