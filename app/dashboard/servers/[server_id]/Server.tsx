@@ -404,7 +404,7 @@ export default function ServerDetail() {
           data: {
             labels: timeLabels,
             datasets: [{
-              label: t('Common.Server.Temperature'),
+              label: t('Common.Server.Temperature') + ' ' + t('Common.Server.Usage'),
               data: history.datasets.temp,
               borderColor: 'rgb(255, 159, 64)',
               backgroundColor: 'rgba(255, 159, 64, 0.1)',
@@ -417,7 +417,7 @@ export default function ServerDetail() {
             plugins: {
               title: {
                 display: true,
-                text: t('Common.Server.TemperatureHistory'),
+                text: t('Common.Server.Temperature') + ' ' + t('Server.UsageHistory'),
                 font: {
                   size: 14
                 }
