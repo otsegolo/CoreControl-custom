@@ -236,6 +236,7 @@
         "SaveButton": "Änderungen speichern"
       },
       "Card": {
+        "Server": "Server",
         "NoServer": "Kein Server",
         "PublicURL": "Öffentliche URL",
         "LocalURL": "Lokale URL",
