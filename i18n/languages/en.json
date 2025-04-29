@@ -1,114 +1,178 @@
 {
-    "Sidebar": {
-        "Main Navigation": "Main Navigation",
-        "Dashboard": "Dashboard",
-        "My Infrastructure": "My Infrastructure",
-        "Servers": "Servers",
-        "Applications": "Applications",
-        "Uptime": "Uptime",
-        "Network": "Network",
-        "Settings": "Settings",
-        "Logout": "Logout"
-    },
-    "Home": {
-        "TitleUnder": "Dashboard to manage your entire server infrastructure",
-        "LoginCardTitle": "Login",
-        "LoginCardDescription": "Enter your credentials to continue",
-        "AuthenticationError": "Authentication Error",
-        "Email": "Email",
-        "Password": "Password",
-        "SigninButton": "Sign in",
-        "SigninButtonSigningIn": "Signing in..."
-    },
-    "Dashboard": {
-        "Title": "Dashboard",
-        "Servers": {
-            "Title": "Servers",
-            "Description": "Physical and virtual servers overview",
-            "PhysicalServers": "Physical Servers",
-            "VirtualServers": "Virtual Servers",
-            "ManageServers": "Manage Servers"
-        },
-        "Applications": {
-            "Title": "Applications",
-            "Description": "Manage your deployed applications",
-            "OnlineApplications": "Running Applications",
-            "ViewAllApplications": "View all applications"
-        },
-        "Uptime": {
-            "Title": "Uptime",
-            "Description": "Monitor your service availability",
-            "OnlineApplications": "Online Applications",
-            "ViewUptimeMetrics": "View uptime metrics"
-        },
-        "Network": {
-            "Title": "Network",
-            "Description": "Manage network configuration",
-            "ActiveConnections": "Active Connections",
-            "ViewNetworkDetails": "View network details"
-        }
-    },
-    "Servers": {
-        "MyInfrastructure": "My Infrastructure",
-        "Title": "Servers",
-        "YourServers": "Your Servers",
-        "ChangeView": "Change View",
-        "ListView": "List View",
-        "GridView": "Grid View",
-        "ItemsPerPage": {
-            "items": "items",
-            "item": "item",
-            "4": "4 items",
-            "6": "6 items",
-            "10": "10 items",
-            "15": "15 items",
-            "20": "20 items",
-            "25": "25 items",
-            "Custom": "Custom (1-100)"
-        },
+    "Common": {
+      "ChangeView": "Change View",
+      "ListView": "List View",
+      "GridView": "Grid View",
+      "optional": "optional",
+      "cancel": "Cancel",
+      "add": "Add",
+      "since": "since {date}",
+      "notSet": "Not set",
+      "noData": "No data",
+      "ItemsPerPage": {
+        "items": "items",
+        "item": "item",
+        "4": "4 items",
+        "6": "6 items",
+        "10": "10 items",
+        "15": "15 items",
+        "20": "20 items",
+        "25": "25 items",
+        "Custom": "Custom (1-100)"
+      },
+      "Server": {
+        "CPU": "CPU",
+        "GPU": "GPU",
+        "RAM": "RAM",
+        "Disk": "Disk",
+        "OS": "OS",
+        "IP": "IP",
+        "Host": "Host",
+        "Temperature": "Temperature",
         "Tabs": {
             "General": "General",
             "Hardware": "Hardware",
             "Host": "Host",
             "Monitoring": "Monitoring"
-        },
-        "optional": "optional",
-        "cancel": "Cancel",
-        "add": "Add",
-        "AddServer": {
-            "Title": "Add a server",
-            "General": {
-                "Title": "Add a server",
-                "CopyServer": "Copy server",
-                "Icon": "Icon",
-                "IconPlaceholder": "Select an icon",
-                "IconSearchPlaceholder": "Search icons...",
-                "Preview": "Preview",
-                "Name": "Name",
-                "OperatingSystem": "Operating System",
-                "OperatingSystemPlaceholder": "Select OS",
-                "IPAdress": "IP Adress",
-                "ManagementURL": "Management URL",
-                "ManagementURLTooltip": "Link to a web interface (e.g. Proxmox or Portainer) with which the server can be managed"
-            },
-            "Hardware": {
-                "CPU": "CPU",
-                "GPU": "GPU",
-                "RAM": "RAM",
-                "Storage": "Storage"
-            },
-            "Host": {
-                "MarkAsHostServer": "Mark as host server",
-                "SelectHostServer": "Select a host server",
-                "SelectHostServerPlaceholder": "Select a host server",
-                "NoHostServer": "No host server"
-            },
-            "Monitoring": {
-                "Enable": "Enable monitoring",
-                "URL": "Monitoring URL",
-                "SetupTitle": "Required Server Setup",
-                "SetupDescription": "To enable monitoring, you need to install Glances on your server. Here's an example Docker Compose configuration:"
-            }
         }
+      }
+    },
+    "Sidebar": {
+      "Main Navigation": "Main Navigation",
+      "Dashboard": "Dashboard",
+      "My Infrastructure": "My Infrastructure",
+      "Servers": "Servers",
+      "Applications": "Applications",
+      "Uptime": "Uptime",
+      "Network": "Network",
+      "Settings": "Settings",
+      "Logout": "Logout"
+    },
+    "Home": {
+      "TitleUnder": "Dashboard to manage your entire server infrastructure",
+      "LoginCardTitle": "Login",
+      "LoginCardDescription": "Enter your credentials to continue",
+      "AuthenticationError": "Authentication Error",
+      "Email": "Email",
+      "Password": "Password",
+      "SigninButton": "Sign in",
+      "SigninButtonSigningIn": "Signing in..."
+    },
+    "Dashboard": {
+      "Title": "Dashboard",
+      "Servers": {
+        "Title": "Servers",
+        "Description": "Physical and virtual servers overview",
+        "PhysicalServers": "Physical Servers",
+        "VirtualServers": "Virtual Servers",
+        "ManageServers": "Manage Servers"
+      },
+      "Applications": {
+        "Title": "Applications",
+        "Description": "Manage your deployed applications",
+        "OnlineApplications": "Running Applications",
+        "ViewAllApplications": "View all applications"
+      },
+      "Uptime": {
+        "Title": "Uptime",
+        "Description": "Monitor your service availability",
+        "OnlineApplications": "Online Applications",
+        "ViewUptimeMetrics": "View uptime metrics"
+      },
+      "Network": {
+        "Title": "Network",
+        "Description": "Manage network configuration",
+        "ActiveConnections": "Active Connections",
+        "ViewNetworkDetails": "View network details"
+      }
+    },
+    "Servers": {
+      "Title": "Servers",
+      "MyInfrastructure": "My Infrastructure",
+      "YourServers": "Your Servers",
+      "AddServer": {
+        "Title": "Add a server",
+        "General": {
+          "Title": "Add a server",
+          "CopyServer": "Copy server",
+          "Icon": "Icon",
+          "IconPlaceholder": "Select an icon",
+          "IconSearchPlaceholder": "Search icons...",
+          "Preview": "Preview",
+          "Name": "Name",
+          "OperatingSystem": "Operating System",
+          "OperatingSystemPlaceholder": "Select OS",
+          "IPAdress": "IP Adress",
+          "ManagementURL": "Management URL",
+          "ManagementURLTooltip": "Link to a web interface (e.g. Proxmox or Portainer) with which the server can be managed"
+        },
+        "Host": {
+          "MarkAsHostServer": "Mark as host server",
+          "SelectHostServer": "Select a host server",
+          "SelectHostServerPlaceholder": "Select a host server",
+          "NoHostServer": "No host server"
+        },
+        "Monitoring": {
+          "Enable": "Enable monitoring",
+          "URL": "Monitoring URL",
+          "SetupTitle": "Required Server Setup",
+          "SetupDescription": "To enable monitoring, you need to install Glances on your server. Here's an example Docker Compose configuration:"
+        }
+      },
+      "ServerCard": {
+        "HardwareInformation": "Hardware Information",
+        "ViewDetails": "View Details",
+        "OpenManagementURL": "Open Management URL",
+        "EditServer": "Edit Server",
+        "DeleteServer": "Delete Server",
+        "HostedVMs": "Hosted VMs",
+        "ResourceUsage": "Resource Usage",
+        "DeleteConfirmation": {
+          "Title": "Delete {name}",
+          "Description": "Are you sure you want to delete this server? This action cannot be undone.",
+          "Cancel": "Cancel",
+          "Delete": "Delete"
+        }
+      },
+      "EditServer": {
+        "Title": "Edit {name}",
+        "Save": "Save",
+        "General": {
+          "Title": "General",
+          "Icon": "Icon",
+          "Name": "Name",
+          "OperatingSystem": "Operating System",
+          "IPAddress": "IP Address",
+          "ManagementURL": "Management URL"
+        },
+        "Hardware": {
+          "Title": "Hardware",
+          "CPU": "CPU",
+          "GPU": "GPU",
+          "RAM": "RAM",
+          "Disk": "Disk"
+        },
+        "Host": {
+          "Title": "Host",
+          "MarkAsHostServer": "Mark as host server",
+          "CannotDisableHost": "Cannot be disabled while hosting VMs",
+          "SelectHostServer": "Select a host server"
+        },
+        "Monitoring": {
+          "Title": "Monitoring",
+          "Enable": "Enable monitoring",
+          "URL": "Monitoring URL",
+          "SetupTitle": "Required Server Setup",
+          "SetupDescription": "To enable monitoring, you need to install Glances on your server. Here's an example Docker Compose configuration:"
+        }
+      },
+      "Pagination": {
+        "Showing": "Showing {start}-{end} of {total} servers",
+        "NoServers": "No servers found"
+      },
+      "Search": {
+        "Placeholder": "Type to search..."
+      }
     }
-}
+  }
+  
