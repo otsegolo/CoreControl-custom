@@ -11,6 +11,7 @@
       "noData": "No data",
       "Loading": "Loading...",
       "Refresh": "Refresh",
+      "Save": "Save",
       "Server": {
         "CPU": "CPU",
         "GPU": "GPU",
@@ -329,6 +330,12 @@
         "Light": "Light",
         "Dark": "Dark",
         "System": "System"
+      },
+      "LanguageSettings": {
+        "Title": "Language Settings",
+        "Description": "Select a language for the application.",
+        "English": "English",
+        "German": "German"
       },
       "Notifications": {
         "Title": "Notifications",

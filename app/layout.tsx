@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale} from 'next-intl/server';
+import {cookies} from 'next/headers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,13 +21,17 @@ export const metadata: Metadata = {
   description: "The only Dashboard you will need for your Services",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get('language')?.value || 'en';
+  const messages = (await import(`@/i18n/languages/${locale}.json`)).default;
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -36,7 +41,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <NextIntlClientProvider>
+            <NextIntlClientProvider locale={locale} messages={messages}>
               {children}
             </NextIntlClientProvider>
           </ThemeProvider>

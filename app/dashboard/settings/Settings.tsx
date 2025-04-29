@@ -82,7 +82,7 @@ export default function Settings() {
   const [pushoverUrl, setPushoverUrl] = useState<string>("")
   const [pushoverToken, setPushoverToken] = useState<string>("")
   const [pushoverUser, setPushoverUser] = useState<string>("")
-
+  const [language, setLanguage] = useState<string>("english")
   const [notifications, setNotifications] = useState<any[]>([])
 
   const [notificationTextApplication, setNotificationTextApplication] = useState<string>("")
@@ -271,6 +271,26 @@ export default function Settings() {
     }
   }
 
+  useEffect(() => {
+    const language = Cookies.get("language")
+    if (language === "en") {
+      setLanguage("english")
+    } else if (language === "de") {
+      setLanguage("german")
+    }
+  }, [])
+
+  const setLanguageFunc = (value: string) => {
+    setLanguage(value)
+    if (value === "english") {
+      Cookies.set("language", "en")
+    } else if (value === "german") {
+      Cookies.set("language", "de")
+    }
+    // Reload the page
+    window.location.reload()
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -418,6 +438,34 @@ export default function Settings() {
                       <SelectItem value="light">{t('Settings.ThemeSettings.Light')}</SelectItem>
                       <SelectItem value="dark">{t('Settings.ThemeSettings.Dark')}</SelectItem>
                       <SelectItem value="system">{t('Settings.ThemeSettings.System')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden border-2 border-muted/20 shadow-sm">
+              <CardHeader className="bg-muted/10 px-6 py-4 border-b">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-primary" />
+                  <h2 className="text-xl font-semibold">{t('Settings.LanguageSettings.Title')}</h2>
+                </div>
+              </CardHeader>
+              <CardContent className="pb-6">
+                <div className="text-sm text-muted-foreground mb-6">
+                  {t('Settings.LanguageSettings.Description')}
+                </div>
+
+                <div className="max-w-md">
+                  <Select value={language} onValueChange={(value: string) => setLanguageFunc(value)}>
+                    <SelectTrigger className="w-full h-11">
+                      <SelectValue>
+                        {t(`Settings.LanguageSettings.${(language ?? "english").charAt(0).toUpperCase() + (language ?? "english").slice(1)}`)}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="english">{t('Settings.LanguageSettings.English')}</SelectItem>
+                      <SelectItem value="german">{t('Settings.LanguageSettings.German')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

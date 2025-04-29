@@ -11,6 +11,7 @@
       "noData": "Keine Daten",
       "Loading": "Lade...",
       "Refresh": "Aktualisieren",
+      "Save": "Speichern",
       "Server": {
         "CPU": "CPU",
         "GPU": "GPU",
@@ -329,6 +330,12 @@
         "Light": "Hell",
         "Dark": "Dunkel",
         "System": "System"
+      },
+      "LanguageSettings": {
+        "Title": "Spracheinstellungen",
+        "Description": "Wählen Sie eine Sprache für die Anwendung.",
+        "English": "Englisch",
+        "German": "Deutsch"
       },
       "Notifications": {
         "Title": "Benachrichtigungen",
