@@ -384,7 +384,8 @@
           },
           "Echobell": {
             "Title": "Echobell",
-            "Url": "Echobell URL"
+            "Url": "Echobell URL",
+            "AddMessage": "Add in Echobell the \"message\" field."
           }
         },
         "CustomizeText": {

@@ -699,7 +699,7 @@ export default function Settings() {
                                     onChange={(e) => setEchobellURL(e.target.value)}
                                   />
                                 </div>
-                               <span className="text-xs text-muted-foreground">Add in Echobell the "message" field.</span>
+                               <span className="text-xs text-muted-foreground">{t('Settings.Notifications.AddNotification.Echobell.AddMessage')}</span>
                               </div>
                             )}
                             
