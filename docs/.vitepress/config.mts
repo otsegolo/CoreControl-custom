@@ -54,6 +54,7 @@ export default defineConfig({
           { text: 'Gotify', link: '/notifications/Gotify' },
           { text: 'Ntfy', link: '/notifications/Ntfy' },
           { text: 'Pushover', link: '/notifications/Pushover' },
+          { text: 'Echobell', link: '/notifications/Echobell' },
         ]
       }
     ],
