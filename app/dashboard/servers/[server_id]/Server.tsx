@@ -599,7 +599,7 @@ export default function ServerDetail() {
                       <div className="space-y-2">
                         <h3 className="text-sm font-medium">{t('Server.CurrentUsage')}</h3>
                         <div className="grid grid-cols-[120px_1fr] text-sm gap-1">
-                          <div className="text-muted-foreground">{t('Common.Server.CPU')} {t('Common.Server.Usage')}:</div>
+                          <div className="text-muted-foreground">{t('Common.Server.CPU')}:</div>
                           <div className="flex items-center gap-2">
                             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
@@ -609,7 +609,7 @@ export default function ServerDetail() {
                             </div>
                             <span>{server.cpuUsage !== null && server.cpuUsage !== undefined ? `${server.cpuUsage}%` : t('Common.noData')}</span>
                           </div>
-                          <div className="text-muted-foreground">{t('Common.Server.RAM')} {t('Common.Server.Usage')}:</div>
+                          <div className="text-muted-foreground">{t('Common.Server.RAM')}:</div>
                           <div className="flex items-center gap-2">
                             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
@@ -619,7 +619,7 @@ export default function ServerDetail() {
                             </div>
                             <span>{server.ramUsage !== null && server.ramUsage !== undefined ? `${server.ramUsage}%` : t('Common.noData')}</span>
                           </div>
-                          <div className="text-muted-foreground">{t('Common.Server.Disk')} {t('Common.Server.Usage')}:</div>
+                          <div className="text-muted-foreground">{t('Common.Server.Disk')}:</div>
                           <div className="flex items-center gap-2">
                             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                               <div 
@@ -631,7 +631,7 @@ export default function ServerDetail() {
                           </div>
                           {server.gpuUsage && server.gpuUsage !== null && server.gpuUsage !== undefined && server.gpuUsage.toString() !== "0" && (
                             <>
-                              <div className="text-muted-foreground">{t('Common.Server.GPU')} {t('Common.Server.Usage')}:</div>
+                              <div className="text-muted-foreground">{t('Common.Server.GPU')}:</div>
                               <div className="flex items-center gap-2">
                                 <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                                   <div 
