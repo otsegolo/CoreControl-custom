@@ -104,6 +104,8 @@ model notification {
   pushoverUrl   String?
   pushoverToken String?
   pushoverUser  String?
+  echobellURL   String?
+  echobellData  String?
 }
 
 model test_notification {
