@@ -549,7 +549,7 @@ export default function Settings() {
 
                                 <div className="grid gap-4">
                                   <div className="space-y-1.5">
-                                    <Label>{t('Settings.Notifications.AddNotification.SMTP.User')}</Label>
+                                    <Label>{t('Settings.Notifications.AddNotification.SMTP.Username')}</Label>
                                     <Input
                                       type="text"
                                       placeholder="user@example.com"
@@ -558,7 +558,7 @@ export default function Settings() {
                                   </div>
 
                                   <div className="space-y-1.5">
-                                    <Label>{t('Settings.Notifications.AddNotification.SMTP.Pass')}</Label>
+                                    <Label>{t('Settings.Notifications.AddNotification.SMTP.Password')}</Label>
                                     <Input
                                       type="password"
                                       placeholder="••••••••"
