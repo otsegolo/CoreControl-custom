@@ -963,7 +963,7 @@ export default function Servers() {
                                     {t('Servers.AddServer.Monitoring.SetupDescription')}
                                   </p>
                                   <pre className="bg-background p-4 rounded-md text-sm overflow-x-auto">
-                                    <code>{`services:
+                              <code>{`services:
   glances:
     image: nicolargo/glances:latest
     container_name: glances
@@ -1976,7 +1976,7 @@ export default function Servers() {
                                                 {t('Servers.EditServer.Monitoring.SetupDescription')}
                                               </p>
                                               <pre className="bg-background p-4 rounded-md text-sm">
-                                                <code>{`services:
+                                              <code>{`services:
   glances:
     image: nicolargo/glances:latest
     container_name: glances
