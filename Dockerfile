@@ -10,7 +10,7 @@ COPY ./prisma ./prisma
 
 # Set PRISMA_CLI_BINARY_TARGETS based on TARGETARCH and install dependencies
 RUN case ${TARGETARCH} in \
-    "amd64") export PRISMA_CLI_BINARY_TARGETS="linux-musl-x64-openssl-3.0.x" ;; \
+    "amd64") export PRISMA_CLI_BINARY_TARGETS="linux-musl-openssl-3.0.x" ;; \
     "arm64") export PRISMA_CLI_BINARY_TARGETS="linux-musl-arm64-openssl-3.0.x" ;; \
     "arm")   export PRISMA_CLI_BINARY_TARGETS="linux-musl-arm-openssl-3.0.x" ;; \
     *) echo "Unsupported ARCH: ${TARGETARCH}" && exit 1 ;; \
@@ -44,7 +44,7 @@ EXPOSE 3000
 # Dynamically set PRISMA_CLI_BINARY_TARGETS based on runtime architecture and start
 CMD ["sh", "-c", \
     "export PRISMA_CLI_BINARY_TARGETS=$(case $(uname -m) in \
-        x86_64) echo 'linux-musl-x64-openssl-3.0.x' ;; \
+        x86_64) echo 'linux-musl-openssl-3.0.x' ;; \
         aarch64) echo 'linux-musl-arm64-openssl-3.0.x' ;; \
         armv7l) echo 'linux-musl-arm-openssl-3.0.x' ;; \
         *) echo "Unsupported architecture: $(uname -m)" && exit 1 ;; \
