@@ -42,12 +42,12 @@ RUN npm prune --production
 EXPOSE 3000
 
 # Dynamically set PRISMA_CLI_BINARY_TARGETS based on runtime architecture and start
-CMD ["sh", "-c", \
-    "export PRISMA_CLI_BINARY_TARGETS=$(case $(uname -m) in \
-        x86_64) echo 'linux-musl-openssl-3.0.x' ;; \
-        aarch64) echo 'linux-musl-arm64-openssl-3.0.x' ;; \
-        armv7l) echo 'linux-musl-arm-openssl-3.0.x' ;; \
-        *) echo "Unsupported architecture: $(uname -m)" && exit 1 ;; \
-    esac) && \
-    npx prisma migrate deploy && \
-    npm start"]
+CMD ["sh", "-c", "\
+  export PRISMA_CLI_BINARY_TARGETS=$(case $(uname -m) in \
+    x86_64)   echo linux-musl-openssl-3.0.x ;; \
+    aarch64) echo linux-musl-arm64-openssl-3.0.x ;; \
+    armv7l)  echo linux-musl-arm-openssl-3.0.x ;; \
+    *) echo \"Unsupported architecture: $(uname -m)\" && exit 1 ;; \
+  esac) && \
+  npx prisma migrate deploy && \
+  npm start"]
