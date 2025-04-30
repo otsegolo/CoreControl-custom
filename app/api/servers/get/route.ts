@@ -132,6 +132,8 @@ export async function POST(request: NextRequest) {
                     cpu: number[],
                     ram: number[],
                     disk: number[],
+                    gpu: number[],
+                    temp: number[],
                     online: boolean[]
                 }>();
 
@@ -142,6 +144,8 @@ export async function POST(request: NextRequest) {
                         cpu: [],
                         ram: [],
                         disk: [],
+                        gpu: [],
+                        temp: [],
                         online: []
                     });
                 });
@@ -167,6 +171,8 @@ export async function POST(request: NextRequest) {
                         interval.cpu.push(parseUsageValue(record.cpuUsage));
                         interval.ram.push(parseUsageValue(record.ramUsage));
                         interval.disk.push(parseUsageValue(record.diskUsage));
+                        interval.gpu.push(parseUsageValue(record.gpuUsage));
+                        interval.temp.push(parseUsageValue(record.temp));
                         interval.online.push(record.online);
                     }
                 });
@@ -178,6 +184,8 @@ export async function POST(request: NextRequest) {
                         cpu: [],
                         ram: [],
                         disk: [],
+                        gpu: [],
+                        temp: [],
                         online: []
                     };
 
@@ -189,6 +197,8 @@ export async function POST(request: NextRequest) {
                         cpu: average(data.cpu),
                         ram: average(data.ram),
                         disk: average(data.disk),
+                        gpu: average(data.gpu),
+                        temp: average(data.temp),
                         online: data.online.length ? 
                             data.online.filter(Boolean).length / data.online.length >= 0.5 
                             : null
@@ -219,6 +229,14 @@ export async function POST(request: NextRequest) {
                             }),
                             disk: intervals.map(d => {
                                 const data = historyMap.get(d.toISOString())?.disk || [];
+                                return data.length ? Math.round((data.reduce((a, b) => a + b) / data.length) * 100) / 100 : null;
+                            }),
+                            gpu: intervals.map(d => {
+                                const data = historyMap.get(d.toISOString())?.gpu || [];
+                                return data.length ? Math.round((data.reduce((a, b) => a + b) / data.length) * 100) / 100 : null;
+                            }),
+                            temp: intervals.map(d => {
+                                const data = historyMap.get(d.toISOString())?.temp || [];
                                 return data.length ? Math.round((data.reduce((a, b) => a + b) / data.length) * 100) / 100 : null;
                             }),
                             online: intervals.map(d => {

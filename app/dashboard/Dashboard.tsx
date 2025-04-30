@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 interface StatsResponse {
   serverCountNoVMs: number
@@ -26,6 +27,7 @@ interface StatsResponse {
 }
 
 export default function Dashboard() {
+  const t = useTranslations('Dashboard')
   const [serverCountNoVMs, setServerCountNoVMs] = useState<number>(0)
   const [serverCountOnlyVMs, setServerCountOnlyVMs] = useState<number>(0)
   const [applicationCount, setApplicationCount] = useState<number>(0)
@@ -62,22 +64,22 @@ export default function Dashboard() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Title')}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
         <div className="p-6">
-          <h1 className="text-3xl font-bold tracking-tight mb-6">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-6">{t('Title')}</h1>
 
           <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
             <Card className="overflow-hidden border-t-4 border-t-rose-500 shadow-lg transition-all hover:shadow-xl hover:border-t-rose-600">
               <CardHeader className="py-3 pb-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl font-semibold">Servers</CardTitle>
-                    <CardDescription className="mt-1">Physical and virtual servers overview</CardDescription>
+                    <CardTitle className="text-2xl font-semibold">{t('Servers.Title')}</CardTitle>
+                    <CardDescription className="mt-1">{t('Servers.Description')}</CardDescription>
                   </div>
                   <Server className="h-8 w-8 text-rose-500 p-1.5 rounded-lg" />
                 </div>
@@ -91,7 +93,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <div className="text-3xl font-bold">{serverCountNoVMs}</div>
-                      <p className="text-sm text-muted-foreground">Physical Servers</p>
+                      <p className="text-sm text-muted-foreground">{t('Servers.PhysicalServers')}</p>
                     </div>
                   </div>
 
@@ -102,7 +104,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <div className="text-3xl font-bold">{serverCountOnlyVMs}</div>
-                      <p className="text-sm text-muted-foreground">Virtual Servers</p>
+                      <p className="text-sm text-muted-foreground">{t('Servers.VirtualServers')}</p>
                     </div>
                   </div>
                 </div>
@@ -115,7 +117,7 @@ export default function Dashboard() {
                   asChild
                 >
                   <Link href="/dashboard/servers" className="flex items-center justify-between">
-                    <span>Manage Servers</span>
+                    <span>{t('Servers.ManageServers')}</span>
                   </Link>
                 </Button>
               </CardFooter>
@@ -125,15 +127,15 @@ export default function Dashboard() {
               <CardHeader className="py-3 pb-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl font-semibold">Applications</CardTitle>
-                    <CardDescription className="mt-1">Manage your deployed applications</CardDescription>
+                    <CardTitle className="text-2xl font-semibold">{t('Applications.Title')}</CardTitle>
+                    <CardDescription className="mt-1">{t('Applications.Description')}</CardDescription>
                   </div>
                   <Layers className="h-8 w-8 text-amber-500 p-1.5 rounded-lg" />
                 </div>
               </CardHeader>
               <CardContent className="pt-1 pb-2 min-h-[120px]">
                 <div className="text-4xl font-bold">{applicationCount}</div>
-                <p className="text-sm text-muted-foreground mt-2">Running applications</p>
+                <p className="text-sm text-muted-foreground mt-2">{t('Applications.OnlineApplications')}</p>
               </CardContent>
               <CardFooter className="border-t bg-muted/10 py-2 px-4">
                 <Button
@@ -143,7 +145,7 @@ export default function Dashboard() {
                   asChild
                 >
                   <Link href="/dashboard/applications" className="flex items-center justify-between">
-                    <span>View all applications</span>
+                    <span>{t('Applications.ViewAllApplications')}</span>
                   </Link>
                 </Button>
               </CardFooter>
@@ -153,8 +155,8 @@ export default function Dashboard() {
               <CardHeader className="py-3 pb-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl font-semibold">Uptime</CardTitle>
-                    <CardDescription className="mt-1">Monitor your service availability</CardDescription>
+                    <CardTitle className="text-2xl font-semibold">{t('Uptime.Title')}</CardTitle>
+                    <CardDescription className="mt-1">{t('Uptime.Description')}</CardDescription>
                   </div>
                   <Activity className="h-8 w-8 text-emerald-500 p-1.5 rounded-lg" />
                 </div>
@@ -177,7 +179,7 @@ export default function Dashboard() {
                       }}
                     ></div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Online applications</p>
+                  <p className="text-sm text-muted-foreground mt-2">{t('Uptime.OnlineApplications')}</p>
                 </div>
               </CardContent>
               <CardFooter className="border-t bg-muted/10 py-2 px-4">
@@ -188,7 +190,7 @@ export default function Dashboard() {
                   asChild
                 >
                   <Link href="/dashboard/uptime" className="flex items-center justify-between">
-                    <span>View uptime metrics</span>
+                    <span>{t('Uptime.ViewUptimeMetrics')}</span>
                   </Link>
                 </Button>
               </CardFooter>
@@ -198,15 +200,15 @@ export default function Dashboard() {
               <CardHeader className="py-3 pb-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl font-semibold">Network</CardTitle>
-                    <CardDescription className="mt-1">Manage network configuration</CardDescription>
+                    <CardTitle className="text-2xl font-semibold">{t('Network.Title')}</CardTitle>
+                    <CardDescription className="mt-1">{t('Network.Description')}</CardDescription>
                   </div>
                   <Network className="h-8 w-8 text-sky-500 p-1.5 rounded-lg" />
                 </div>
               </CardHeader>
               <CardContent className="pt-1 pb-2 min-h-[120px]">
                 <div className="text-4xl font-bold">{serverCountNoVMs + serverCountOnlyVMs + applicationCount}</div>
-                <p className="text-sm text-muted-foreground mt-2">Active connections</p>
+                <p className="text-sm text-muted-foreground mt-2">{t('Network.ActiveConnections')}</p>
               </CardContent>
               <CardFooter className="border-t bg-muted/10 py-2 px-4">
                 <Button
@@ -216,7 +218,7 @@ export default function Dashboard() {
                   asChild
                 >
                   <Link href="/dashboard/network" className="flex items-center justify-between">
-                    <span>View network details</span>
+                    <span>{t('Network.ViewNetworkDetails')}</span>
                   </Link>
                 </Button>
               </CardFooter>

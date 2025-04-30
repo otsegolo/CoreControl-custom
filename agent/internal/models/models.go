@@ -21,6 +21,8 @@ type Server struct {
 	CpuUsage      sql.NullFloat64
 	RamUsage      sql.NullFloat64
 	DiskUsage     sql.NullFloat64
+	GpuUsage      sql.NullFloat64
+	Temp          sql.NullFloat64
 	Uptime        sql.NullString
 }
 
@@ -51,6 +53,26 @@ type UptimeResponse struct {
 	Value string `json:"value"`
 }
 
+type GPUResponse struct {
+	Proc float64 `json:"proc"`
+}
+
+type TemperatureResponse struct {
+	Composite []struct {
+		Label    string  `json:"label"`
+		Unit     string  `json:"unit"`
+		Value    float64 `json:"value"`
+		Warning  float64 `json:"warning"`
+		Critical float64 `json:"critical"`
+		Type     string  `json:"type"`
+		Key      string  `json:"key"`
+	} `json:"Composite"`
+}
+
+type TempResponse struct {
+	Value float64 `json:"value"`
+}
+
 type Notification struct {
 	ID             int
 	Enabled        bool
@@ -72,4 +94,5 @@ type Notification struct {
 	PushoverUrl    sql.NullString
 	PushoverToken  sql.NullString
 	PushoverUser   sql.NullString
+	EchobellURL    sql.NullString
 }

@@ -11,6 +11,8 @@ export async function GET() {
         cpuUsage: true,
         ramUsage: true,
         diskUsage: true,
+        gpuUsage: true,
+        temp: true,
         uptime: true
       }
     });
@@ -21,13 +23,17 @@ export async function GET() {
       cpuUsage: string | null;
       ramUsage: string | null;
       diskUsage: string | null;
+      gpuUsage: string | null;
+      temp: string | null;
       uptime: string | null;
     }) => ({
       id: server.id,
       online: server.online,
-      cpuUsage: server.cpuUsage ? parseInt(server.cpuUsage) : 0,
-      ramUsage: server.ramUsage ? parseInt(server.ramUsage) : 0,
-      diskUsage: server.diskUsage ? parseInt(server.diskUsage) : 0,
+      cpuUsage: server.cpuUsage ? parseFloat(server.cpuUsage) : 0,
+      ramUsage: server.ramUsage ? parseFloat(server.ramUsage) : 0,
+      diskUsage: server.diskUsage ? parseFloat(server.diskUsage) : 0,
+      gpuUsage: server.gpuUsage ? parseFloat(server.gpuUsage) : 0,
+      temp: server.temp ? parseFloat(server.temp) : 0,
       uptime: server.uptime || ""
     }));
 

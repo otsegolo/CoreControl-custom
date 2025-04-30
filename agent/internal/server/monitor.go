@@ -8,11 +8,20 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/corecontrol/agent/internal/models"
 	"github.com/corecontrol/agent/internal/notifications"
 )
+
+// notificationState tracks the last known status for each server
+var notificationState = struct {
+	sync.RWMutex
+	lastStatus map[int]bool
+}{
+	lastStatus: make(map[int]bool),
+}
 
 // MonitorServers checks and updates the status of all servers
 func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, notifSender *notifications.NotificationSender) {
@@ -31,16 +40,18 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		fmt.Printf("%s Checking...\n", logPrefix)
 
 		baseURL := strings.TrimSuffix(server.MonitoringURL.String, "/")
-		var cpuUsage, ramUsage, diskUsage float64
+		var cpuUsage, ramUsage, diskUsage, gpuUsage, temp float64
 		var online = true
 		var uptimeStr string
 
 		// Get CPU usage
 		online, cpuUsage = fetchCPUUsage(client, baseURL, logPrefix)
 		if !online {
-			updateServerStatus(db, server.ID, false, 0, 0, 0, "")
-			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
-			addServerHistoryEntry(db, server.ID, false, 0, 0, 0)
+			updateServerStatus(db, server.ID, false, 0, 0, 0, 0, 0, "")
+			if shouldSendNotification(server.ID, online) {
+				sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			}
+			addServerHistoryEntry(db, server.ID, false, 0, 0, 0, 0, 0)
 			continue
 		}
 
@@ -51,9 +62,11 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		memOnline, memUsage := fetchMemoryUsage(client, baseURL, logPrefix)
 		if !memOnline {
 			online = false
-			updateServerStatus(db, server.ID, false, 0, 0, 0, "")
-			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
-			addServerHistoryEntry(db, server.ID, false, 0, 0, 0)
+			updateServerStatus(db, server.ID, false, 0, 0, 0, 0, 0, "")
+			if shouldSendNotification(server.ID, online) {
+				sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			}
+			addServerHistoryEntry(db, server.ID, false, 0, 0, 0, 0, 0)
 			continue
 		}
 		ramUsage = memUsage
@@ -62,27 +75,53 @@ func MonitorServers(db *sql.DB, client *http.Client, servers []models.Server, no
 		diskOnline, diskUsageVal := fetchDiskUsage(client, baseURL, logPrefix)
 		if !diskOnline {
 			online = false
-			updateServerStatus(db, server.ID, false, 0, 0, 0, "")
-			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
-			addServerHistoryEntry(db, server.ID, false, 0, 0, 0)
+			updateServerStatus(db, server.ID, false, 0, 0, 0, 0, 0, "")
+			if shouldSendNotification(server.ID, online) {
+				sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
+			}
+			addServerHistoryEntry(db, server.ID, false, 0, 0, 0, 0, 0)
 			continue
 		}
 		diskUsage = diskUsageVal
 
+		// Get GPU usage
+		_, gpuUsageVal := fetchGPUUsage(client, baseURL, logPrefix)
+		gpuUsage = gpuUsageVal
+
+		// Get Temperature
+		_, tempVal := fetchTemperature(client, baseURL, logPrefix)
+		temp = tempVal
+
 		// Check if status changed and send notification if needed
-		if online != server.Online {
+		if online != server.Online && shouldSendNotification(server.ID, online) {
 			sendStatusChangeNotification(server, online, notificationTemplate, notifSender)
 		}
 
 		// Update server status with metrics
-		updateServerStatus(db, server.ID, online, cpuUsage, ramUsage, diskUsage, uptimeStr)
+		updateServerStatus(db, server.ID, online, cpuUsage, ramUsage, diskUsage, gpuUsage, temp, uptimeStr)
 
 		// Add entry to server history
-		addServerHistoryEntry(db, server.ID, online, cpuUsage, ramUsage, diskUsage)
+		addServerHistoryEntry(db, server.ID, online, cpuUsage, ramUsage, diskUsage, gpuUsage, temp)
 
-		fmt.Printf("%s Updated - CPU: %.2f%%, RAM: %.2f%%, Disk: %.2f%%, Uptime: %s\n",
-			logPrefix, cpuUsage, ramUsage, diskUsage, uptimeStr)
+		fmt.Printf("%s Updated - CPU: %.2f%%, RAM: %.2f%%, Disk: %.2f%%, GPU: %.2f%%, Temp: %.2f°C, Uptime: %s\n",
+			logPrefix, cpuUsage, ramUsage, diskUsage, gpuUsage, temp, uptimeStr)
 	}
+}
+
+// shouldSendNotification checks if a notification should be sent based on status change
+func shouldSendNotification(serverID int, online bool) bool {
+	notificationState.Lock()
+	defer notificationState.Unlock()
+
+	lastStatus, exists := notificationState.lastStatus[serverID]
+
+	// If this is the first check or status has changed
+	if !exists || lastStatus != online {
+		notificationState.lastStatus[serverID] = online
+		return true
+	}
+
+	return false
 }
 
 // Helper function to fetch CPU usage
@@ -194,6 +233,56 @@ func fetchUptime(client *http.Client, baseURL, logPrefix string) string {
 	return uptimeStr
 }
 
+// Helper function to fetch GPU usage
+func fetchGPUUsage(client *http.Client, baseURL, logPrefix string) (bool, float64) {
+	gpuResp, err := client.Get(fmt.Sprintf("%s/api/4/gpu", baseURL))
+	if err != nil {
+		fmt.Printf("%s GPU request failed: %v\n", logPrefix, err)
+		return true, 0 // Return true to indicate server is still online
+	}
+	defer gpuResp.Body.Close()
+
+	if gpuResp.StatusCode != http.StatusOK {
+		fmt.Printf("%s Bad GPU status code: %d\n", logPrefix, gpuResp.StatusCode)
+		return true, 0 // Return true to indicate server is still online
+	}
+
+	var gpuData models.GPUResponse
+	if err := json.NewDecoder(gpuResp.Body).Decode(&gpuData); err != nil {
+		fmt.Printf("%s Failed to parse GPU JSON: %v\n", logPrefix, err)
+		return true, 0 // Return true to indicate server is still online
+	}
+
+	return true, gpuData.Proc
+}
+
+// Helper function to fetch temperature
+func fetchTemperature(client *http.Client, baseURL, logPrefix string) (bool, float64) {
+	tempResp, err := client.Get(fmt.Sprintf("%s/api/4/sensors/label/value/Composite", baseURL))
+	if err != nil {
+		fmt.Printf("%s Temperature request failed: %v\n", logPrefix, err)
+		return true, 0 // Return true to indicate server is still online
+	}
+	defer tempResp.Body.Close()
+
+	if tempResp.StatusCode != http.StatusOK {
+		fmt.Printf("%s Bad temperature status code: %d\n", logPrefix, tempResp.StatusCode)
+		return true, 0 // Return true to indicate server is still online
+	}
+
+	var tempData models.TemperatureResponse
+	if err := json.NewDecoder(tempResp.Body).Decode(&tempData); err != nil {
+		fmt.Printf("%s Failed to parse temperature JSON: %v\n", logPrefix, err)
+		return true, 0 // Return true to indicate server is still online
+	}
+
+	if len(tempData.Composite) > 0 {
+		return true, tempData.Composite[0].Value
+	}
+
+	return true, 0
+}
+
 // Helper function to send notification about status change
 func sendStatusChangeNotification(server models.Server, online bool, template string, notifSender *notifications.NotificationSender) {
 	status := "offline"
@@ -208,14 +297,14 @@ func sendStatusChangeNotification(server models.Server, online bool, template st
 }
 
 // Helper function to update server status
-func updateServerStatus(db *sql.DB, serverID int, online bool, cpuUsage, ramUsage, diskUsage float64, uptime string) {
+func updateServerStatus(db *sql.DB, serverID int, online bool, cpuUsage, ramUsage, diskUsage, gpuUsage, temp float64, uptime string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	_, err := db.ExecContext(ctx,
-		`UPDATE server SET online = $1, "cpuUsage" = $2::float8, "ramUsage" = $3::float8, "diskUsage" = $4::float8, "uptime" = $5
-		 WHERE id = $6`,
-		online, cpuUsage, ramUsage, diskUsage, uptime, serverID,
+		`UPDATE server SET online = $1, "cpuUsage" = $2::float8, "ramUsage" = $3::float8, "diskUsage" = $4::float8, "gpuUsage" = $5::float8, "temp" = $6::float8, "uptime" = $7
+		 WHERE id = $8`,
+		online, cpuUsage, ramUsage, diskUsage, gpuUsage, temp, uptime, serverID,
 	)
 	if err != nil {
 		fmt.Printf("Failed to update server status (ID: %d): %v\n", serverID, err)
@@ -223,15 +312,16 @@ func updateServerStatus(db *sql.DB, serverID int, online bool, cpuUsage, ramUsag
 }
 
 // Helper function to add server history entry
-func addServerHistoryEntry(db *sql.DB, serverID int, online bool, cpuUsage, ramUsage, diskUsage float64) {
+func addServerHistoryEntry(db *sql.DB, serverID int, online bool, cpuUsage, ramUsage, diskUsage, gpuUsage, temp float64) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	_, err := db.ExecContext(ctx,
 		`INSERT INTO server_history(
-			"serverId", online, "cpuUsage", "ramUsage", "diskUsage", "createdAt"
-		) VALUES ($1, $2, $3, $4, $5, now())`,
-		serverID, online, fmt.Sprintf("%.2f", cpuUsage), fmt.Sprintf("%.2f", ramUsage), fmt.Sprintf("%.2f", diskUsage),
+			"serverId", online, "cpuUsage", "ramUsage", "diskUsage", "gpuUsage", "temp", "createdAt"
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, now())`,
+		serverID, online, fmt.Sprintf("%.2f", cpuUsage), fmt.Sprintf("%.2f", ramUsage),
+		fmt.Sprintf("%.2f", diskUsage), fmt.Sprintf("%.2f", gpuUsage), fmt.Sprintf("%.2f", temp),
 	)
 	if err != nil {
 		fmt.Printf("Failed to insert server history (ID: %d): %v\n", serverID, err)

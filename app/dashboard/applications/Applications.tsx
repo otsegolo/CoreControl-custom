@@ -85,6 +85,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslations } from "next-intl";
 
 interface Application {
   id: number;
@@ -112,6 +113,7 @@ interface ApplicationsResponse {
 }
 
 export default function Dashboard() {
+  const t = useTranslations();
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [icon, setIcon] = useState<string>("");
@@ -182,31 +184,28 @@ export default function Dashboard() {
   };
 
   const handleItemsPerPageChange = (value: string) => {
-    // Clear any existing timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Set a new timer
     debounceTimerRef.current = setTimeout(() => {
       const newItemsPerPage = parseInt(value);
       
-      // Ensure the value is within the valid range
       if (isNaN(newItemsPerPage) || newItemsPerPage < 1) {
-        toast.error("Please enter a number between 1 and 100");
+        toast.error(t('Applications.Messages.NumberValidation'));
         return;
       }
       
       const validatedValue = Math.min(Math.max(newItemsPerPage, 1), 100);
       
       setItemsPerPage(validatedValue);
-      setCurrentPage(1); // Reset to first page when changing items per page
+      setCurrentPage(1);
       Cookies.set("itemsPerPage-app", String(validatedValue), {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
-    }, 300); // 300ms delay
+    }, 300);
   };
 
   const add = async () => {
@@ -221,10 +220,10 @@ export default function Dashboard() {
         uptimecheckUrl: customUptimeCheck ? uptimecheckUrl : "",
       });
       getApplications();
-      toast.success("Application added successfully");
+      toast.success(t('Applications.Messages.AddSuccess'));
     } catch (error: any) {
       console.log(error.response?.data);
-      toast.error("Failed to add application");
+      toast.error(t('Applications.Messages.AddError'));
     }
   };
 
@@ -244,7 +243,7 @@ export default function Dashboard() {
       setLoading(false);
     } catch (error: any) {
       console.log(error.response?.data);
-      toast.error("Failed to get applications");
+      toast.error(t('Applications.Messages.GetError'));
     }
   };
 
@@ -265,10 +264,10 @@ export default function Dashboard() {
     try {
       await axios.post("/api/applications/delete", { id });
       getApplications();
-      toast.success("Application deleted successfully");
+      toast.success(t('Applications.Messages.DeleteSuccess'));
     } catch (error: any) {
       console.log(error.response?.data);
-      toast.error("Failed to delete application");
+      toast.error(t('Applications.Messages.DeleteError'));
     }
   };
 
@@ -306,10 +305,10 @@ export default function Dashboard() {
       });
       getApplications();
       setEditId(null);
-      toast.success("Application edited successfully");
+      toast.success(t('Applications.Messages.EditSuccess'));
     } catch (error: any) {
       console.log(error.response.data);
-      toast.error("Failed to edit application");
+      toast.error(t('Applications.Messages.EditError'));
     }
   };
 
@@ -363,11 +362,11 @@ export default function Dashboard() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>My Infrastructure</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Applications.Breadcrumb.MyInfrastructure')}</BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Applications</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Applications.Breadcrumb.Applications')}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -376,11 +375,11 @@ export default function Dashboard() {
         <Toaster />
         <div className="p-6">
           <div className="flex justify-between items-center">
-            <span className="text-3xl font-bold">Your Applications</span>
+            <span className="text-3xl font-bold">{t('Applications.Title')}</span>
             <div className="flex gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" title="Change view">
+                  <Button variant="outline" size="icon" title={t('Applications.Views.ChangeView')}>
                     {isCompactLayout ? (
                       <Grid3X3 className="h-4 w-4" />
                     ) : isGridLayout ? (
@@ -392,13 +391,13 @@ export default function Dashboard() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => toggleLayout("standard")}>
-                    <List className="h-4 w-4 mr-2" /> List View
+                    <List className="h-4 w-4 mr-2" /> {t('Applications.Views.ListView')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => toggleLayout("grid")}>
-                    <LayoutGrid className="h-4 w-4 mr-2" /> Grid View
+                    <LayoutGrid className="h-4 w-4 mr-2" /> {t('Applications.Views.GridView')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => toggleLayout("compact")}>
-                    <Grid3X3 className="h-4 w-4 mr-2" /> Compact View
+                    <Grid3X3 className="h-4 w-4 mr-2" /> {t('Applications.Views.CompactView')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -489,7 +488,7 @@ export default function Dashboard() {
               </Select>
               {servers.length === 0 ? (
                 <p className="text-muted-foreground">
-                  You must first add a server.
+                  {t('Applications.Messages.AddServerFirst')}
                 </p>
               ) : (
                 <AlertDialog>
@@ -498,26 +497,26 @@ export default function Dashboard() {
                       <Plus />
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+                  <AlertDialogContent className="max-w-[90vw] w-[600px] max-h-[90vh] overflow-y-auto">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Add an application</AlertDialogTitle>
+                      <AlertDialogTitle>{t('Applications.Add.Title')}</AlertDialogTitle>
                       <AlertDialogDescription>
                         <div className="space-y-4 pt-4">
                           <div className="grid w-full items-center gap-1.5">
-                            <Label>Name</Label>
+                            <Label>{t('Applications.Add.Name')}</Label>
                             <Input
-                              placeholder="e.g. Portainer"
+                              placeholder={t('Applications.Add.NamePlaceholder')}
                               onChange={(e) => setName(e.target.value)}
                             />
                           </div>
                           <div className="grid w-full items-center gap-1.5">
-                            <Label>Server</Label>
+                            <Label>{t('Applications.Add.Server')}</Label>
                             <Select
                               onValueChange={(v) => setServerId(Number(v))}
                               required
                             >
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select server" />
+                                <SelectValue placeholder={t('Applications.Add.SelectServer')} />
                               </SelectTrigger>
                               <SelectContent>
                                 {servers.map((server) => (
@@ -533,53 +532,41 @@ export default function Dashboard() {
                           </div>
                           <div className="grid w-full items-center gap-1.5">
                             <Label>
-                              Description{" "}
-                              <span className="text-stone-600">(optional)</span>
+                              {t('Applications.Add.Description')}{" "}
+                              <span className="text-stone-600">{t('Common.optional')}</span>
                             </Label>
                             <Textarea
-                              placeholder="Application description"
+                              placeholder={t('Applications.Add.DescriptionPlaceholder')}
                               onChange={(e) => setDescription(e.target.value)}
                             />
                           </div>
                           <div className="grid w-full items-center gap-1.5">
-                            <Label>
-                              Icon URL{" "}
-                              <span className="text-stone-600">(optional)</span>
-                            </Label>
+                            <Label>{t('Applications.Add.IconURL')}</Label>
                             <div className="flex gap-2">
                               <Input
-                                value={icon}
-                                placeholder="https://example.com/icon.png"
+                                placeholder={t('Applications.Add.IconURLPlaceholder')}
                                 onChange={(e) => setIcon(e.target.value)}
-                              />
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <Button variant="outline" size="icon" onClick={generateIconURL}>
-                                      <Zap />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    Generate Icon URL
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                                value={icon}
+                            />
+                            <Button variant="outline" size="icon" onClick={generateIconURL}>
+                                <Zap />
+                              </Button>
                             </div>
                           </div>
                           <div className="grid w-full items-center gap-1.5">
-                            <Label>Public URL</Label>
+                            <Label>{t('Applications.Add.PublicURL')}</Label>
                             <Input
-                              placeholder="https://example.com"
+                              placeholder={t('Applications.Add.PublicURLPlaceholder')}
                               onChange={(e) => setPublicURL(e.target.value)}
                             />
                           </div>
                           <div className="grid w-full items-center gap-1.5">
                             <Label>
-                              Local URL{" "}
-                              <span className="text-stone-600">(optional)</span>
+                              {t('Applications.Add.LocalURL')}{" "}
+                              <span className="text-stone-600">{t('Common.optional')}</span>
                             </Label>
                             <Input
-                              placeholder="http://localhost:3000"
+                              placeholder={t('Applications.Add.LocalURLPlaceholder')}
                               onChange={(e) => setLocalURL(e.target.value)}
                             />
                           </div>
@@ -591,23 +578,23 @@ export default function Dashboard() {
                               onChange={(e) => setCustomUptimeCheck(e.target.checked)}
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                             />
-                            <Label htmlFor="custom-uptime-check">Custom Uptime Check URL</Label>
+                            <Label htmlFor="custom-uptime-check">{t('Applications.Add.CustomUptimeCheck')}</Label>
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger>
                                   <HelpCircle className="h-4 w-4 text-muted-foreground" />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  When enabled, this URL replaces the Public URL for uptime monitoring checks
+                                  {t('Applications.Add.CustomUptimeCheckTooltip')}
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
                           </div>
                           {customUptimeCheck && (
                             <div className="grid w-full items-center gap-1.5">
-                              <Label>Uptime Check URL</Label>
+                              <Label>{t('Applications.Add.UptimeCheckURL')}</Label>
                               <Input
-                                placeholder="https://example.com/status"
+                                placeholder={t('Applications.Add.UptimeCheckURLPlaceholder')}
                                 value={uptimecheckUrl}
                                 onChange={(e) => setUptimecheckUrl(e.target.value)}
                               />
@@ -617,12 +604,12 @@ export default function Dashboard() {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t('Common.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={add}
                         disabled={!name || !publicURL || !serverId}
                       >
-                        Add
+                        {t('Common.add')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -633,7 +620,7 @@ export default function Dashboard() {
           <div className="flex flex-col gap-2 mb-4 pt-2">
             <Input
               id="application-search"
-              placeholder="Type to search..."
+              placeholder={t('Applications.Search.Placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -668,7 +655,7 @@ export default function Dashboard() {
                           className="w-full h-full object-contain rounded-md"
                         />
                       ) : (
-                        <span className="text-gray-500 text-xs">Icon</span>
+                        <span className="text-gray-500 text-xs">{t('Applications.Card.Icon')}</span>
                       )}
                     </div>
                     <div className="text-center mt-2">
@@ -698,7 +685,7 @@ export default function Dashboard() {
                                 className="w-full h-full object-contain rounded-md"
                               />
                             ) : (
-                              <span className="text-gray-500 text-xs">Image</span>
+                              <span className="text-gray-500 text-xs">{t('Applications.Card.Image')}</span>
                             )}
                           </div>
                           <div className="ml-4">
@@ -710,7 +697,7 @@ export default function Dashboard() {
                               {app.description && (
                                 <br className="hidden md:block" />
                               )}
-                              Server: {app.server || "No server"}
+                              {t('Applications.Card.Server')}: {app.server || t('Applications.Card.NoServer')}
                             </CardDescription>
                           </div>
                         </div>
@@ -727,7 +714,7 @@ export default function Dashboard() {
                                   }
                                 >
                                   <Link className="h-4 w-4" />
-                                  Public URL
+                                  {t('Applications.Card.PublicURL')}
                                 </Button>
                                 {app.localURL && (
                                   <Button
@@ -738,7 +725,7 @@ export default function Dashboard() {
                                     }
                                   >
                                     <Home className="h-4 w-4" />
-                                    Local URL
+                                    {t('Applications.Card.LocalURL')}
                                   </Button>
                                 )}
                               </div>
@@ -761,7 +748,7 @@ export default function Dashboard() {
                                       <Pencil className="h-4 w-4" />
                                     </Button>
                                   </AlertDialogTrigger>
-                                  <AlertDialogContent>
+                                  <AlertDialogContent className="max-w-[90vw] w-[600px] max-h-[90vh] overflow-y-auto">
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>
                                         Edit Application
@@ -929,7 +916,7 @@ export default function Dashboard() {
                               onClick={() => window.open(app.publicURL, "_blank")}
                             >
                               <Link className="h-4 w-4" />
-                              Public URL
+                              {t('Applications.Card.PublicURL')}
                             </Button>
                             {app.localURL && (
                               <Button
@@ -938,7 +925,7 @@ export default function Dashboard() {
                                 onClick={() => window.open(app.localURL, "_blank")}
                               >
                                 <Home className="h-4 w-4" />
-                                Local URL
+                                {t('Applications.Card.LocalURL')}
                               </Button>
                             )}
                           </div>
@@ -961,7 +948,7 @@ export default function Dashboard() {
                                   <Pencil className="h-4 w-4" />
                                 </Button>
                               </AlertDialogTrigger>
-                              <AlertDialogContent>
+                              <AlertDialogContent className="max-w-[90vw] w-[600px] max-h-[90vh] overflow-y-auto">
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>
                                     Edit Application
@@ -1124,7 +1111,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-center">
               <div className="inline-block" role="status" aria-label="loading">
                 <svg
-                  className="w-6 h-6 stroke-white animate-spin "
+                  className="w-6 h-6 stroke-white animate-spin"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1144,14 +1131,16 @@ export default function Dashboard() {
                     </clipPath>
                   </defs>
                 </svg>
-                <span className="sr-only">Loading...</span>
+                <span className="sr-only">{t('Common.Loading')}</span>
               </div>
             </div>
           )}
           <div className="pt-4 pb-4">
             <div className="flex justify-between items-center mb-2">
               <div className="text-sm text-muted-foreground">
-                {totalItems > 0 ? `Showing ${startItem}-${endItem} of ${totalItems} applications` : "No applications found"}
+                {totalItems > 0 
+                  ? t('Applications.Pagination.Showing', { start: startItem, end: endItem, total: totalItems })
+                  : t('Applications.Pagination.NoApplications')}
               </div>
             </div>
             <Pagination>

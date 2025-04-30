@@ -31,6 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { useTranslations } from "next-intl";
 
 const timeFormats = {
   1: (timestamp: string) => 
@@ -81,6 +82,7 @@ interface PaginationData {
 }
 
 export default function Uptime() {
+  const t = useTranslations();
   const [data, setData] = useState<UptimeData[]>([]);
   const [timespan, setTimespan] = useState<1 | 2 | 3 | 4>(1);
   const [pagination, setPagination] = useState<PaginationData>({
@@ -138,34 +140,30 @@ export default function Uptime() {
   };
 
   const handleItemsPerPageChange = (value: string) => {
-    // Clear any existing timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Set a new timer
     debounceTimerRef.current = setTimeout(() => {
       const newItemsPerPage = parseInt(value);
       
-      // Ensure the value is within the valid range
       if (isNaN(newItemsPerPage) || newItemsPerPage < 1) {
-        toast.error("Please enter a number between 1 and 100");
+        toast.error(t('Uptime.Messages.NumberValidation'));
         return;
       }
       
       const validatedValue = Math.min(Math.max(newItemsPerPage, 1), 100);
       
       setItemsPerPage(validatedValue);
-      setPagination(prev => ({...prev, currentPage: 1})); // Reset to first page
+      setPagination(prev => ({...prev, currentPage: 1}));
       Cookies.set("itemsPerPage-uptime", String(validatedValue), {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
       
-      // Fetch data with new pagination
       getData(timespan, 1, validatedValue);
-    }, 300); // 300ms delay
+    }, 300);
   };
 
   useEffect(() => {
@@ -187,11 +185,11 @@ export default function Uptime() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>My Infrastructure</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Uptime.Breadcrumb.MyInfrastructure')}</BreadcrumbPage>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Uptime</BreadcrumbPage>
+                  <BreadcrumbPage>{t('Uptime.Breadcrumb.Uptime')}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -200,7 +198,7 @@ export default function Uptime() {
         <Toaster />
         <div className="p-6">
           <div className="flex justify-between items-center">
-            <span className="text-3xl font-bold">Uptime</span>
+            <span className="text-3xl font-bold">{t('Uptime.Title')}</span>
             <div className="flex gap-2">
               <Select
                 value={String(itemsPerPage)}
@@ -213,22 +211,22 @@ export default function Uptime() {
               >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue>
-                    {itemsPerPage} {itemsPerPage === 1 ? 'item' : 'items'}
+                    {itemsPerPage} {itemsPerPage === 1 ? t('Common.ItemsPerPage.item') : t('Common.ItemsPerPage.items')}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {![5, 10, 15, 20, 25].includes(itemsPerPage) ? (
                     <SelectItem value={String(itemsPerPage)}>
-                      {itemsPerPage} {itemsPerPage === 1 ? 'item' : 'items'} (custom)
+                      {itemsPerPage} {itemsPerPage === 1 ? t('Common.ItemsPerPage.item') : t('Common.ItemsPerPage.items')} (custom)
                     </SelectItem>
                   ) : null}
-                  <SelectItem value="5">5 items</SelectItem>
-                  <SelectItem value="10">10 items</SelectItem>
-                  <SelectItem value="15">15 items</SelectItem>
-                  <SelectItem value="20">20 items</SelectItem>
-                  <SelectItem value="25">25 items</SelectItem>
+                  <SelectItem value="5">{t('Common.ItemsPerPage.5')}</SelectItem>
+                  <SelectItem value="10">{t('Common.ItemsPerPage.10')}</SelectItem>
+                  <SelectItem value="15">{t('Common.ItemsPerPage.15')}</SelectItem>
+                  <SelectItem value="20">{t('Common.ItemsPerPage.20')}</SelectItem>
+                  <SelectItem value="25">{t('Common.ItemsPerPage.25')}</SelectItem>
                   <div className="p-2 border-t mt-1">
-                    <Label htmlFor="custom-items" className="text-xs font-medium">Custom (1-100)</Label>
+                    <Label htmlFor="custom-items" className="text-xs font-medium">{t('Common.ItemsPerPage.Custom')}</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Input
                         id="custom-items"
@@ -239,8 +237,6 @@ export default function Uptime() {
                         className="h-8"
                         defaultValue={itemsPerPage}
                         onChange={(e) => {
-                          // Don't immediately apply the change while typing
-                          // Just validate the input for visual feedback
                           const value = parseInt(e.target.value);
                           if (isNaN(value) || value < 1 || value > 100) {
                             e.target.classList.add("border-red-500");
@@ -249,7 +245,6 @@ export default function Uptime() {
                           }
                         }}
                         onBlur={(e) => {
-                          // Apply the change when the input loses focus
                           const value = parseInt(e.target.value);
                           if (value >= 1 && value <= 100) {
                             handleItemsPerPageChange(e.target.value);
@@ -257,7 +252,6 @@ export default function Uptime() {
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            // Clear any existing debounce timer to apply immediately
                             if (debounceTimerRef.current) {
                               clearTimeout(debounceTimerRef.current);
                               debounceTimerRef.current = null;
@@ -265,7 +259,6 @@ export default function Uptime() {
                             
                             const value = parseInt((e.target as HTMLInputElement).value);
                             if (value >= 1 && value <= 100) {
-                              // Apply change immediately on Enter
                               const validatedValue = Math.min(Math.max(value, 1), 100);
                               setItemsPerPage(validatedValue);
                               setPagination(prev => ({...prev, currentPage: 1}));
@@ -275,15 +268,13 @@ export default function Uptime() {
                                 sameSite: "strict",
                               });
                               getData(timespan, 1, validatedValue);
-                              
-                              // Close the dropdown
                               document.body.click();
                             }
                           }
                         }}
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">items</span>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{t('Common.ItemsPerPage.items')}</span>
                     </div>
                   </div>
                 </SelectContent>
@@ -297,13 +288,13 @@ export default function Uptime() {
                 disabled={isLoading}
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select timespan" />
+                  <SelectValue placeholder={t('Uptime.TimeRange.Select')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">Last 1 hour</SelectItem>
-                  <SelectItem value="2">Last 1 day</SelectItem>
-                  <SelectItem value="3">Last 7 days</SelectItem>
-                  <SelectItem value="4">Last 30 days</SelectItem>
+                  <SelectItem value="1">{t('Uptime.TimeRange.LastHour')}</SelectItem>
+                  <SelectItem value="2">{t('Uptime.TimeRange.LastDay')}</SelectItem>
+                  <SelectItem value="3">{t('Uptime.TimeRange.Last7Days')}</SelectItem>
+                  <SelectItem value="4">{t('Uptime.TimeRange.Last30Days')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -311,7 +302,7 @@ export default function Uptime() {
 
           <div className="pt-4 space-y-4">
             {isLoading ? (
-              <div className="text-center py-8">Loading...</div>
+              <div className="text-center py-8">{t('Uptime.Messages.Loading')}</div>
             ) : (
               data.map((app) => {
                 const reversedSummary = [...app.uptimeSummary].reverse();
@@ -370,10 +361,10 @@ export default function Uptime() {
                                         </p>
                                         <p>
                                           {entry.missing
-                                            ? "No data"
+                                            ? t('Uptime.Status.NoData')
                                             : entry.online
-                                            ? "Online"
-                                            : "Offline"}
+                                            ? t('Uptime.Status.Online')
+                                            : t('Uptime.Status.Offline')}
                                         </p>
                                       </div>
                                       <Tooltip.Arrow className="fill-gray-900" />
@@ -397,8 +388,12 @@ export default function Uptime() {
               <div className="flex justify-between items-center mb-2">
                 <div className="text-sm text-muted-foreground">
                   {pagination.totalItems > 0 
-                    ? `Showing ${((pagination.currentPage - 1) * itemsPerPage) + 1}-${Math.min(pagination.currentPage * itemsPerPage, pagination.totalItems)} of ${pagination.totalItems} items` 
-                    : "No items found"}
+                    ? t('Uptime.Pagination.Showing', { 
+                        start: ((pagination.currentPage - 1) * itemsPerPage) + 1, 
+                        end: Math.min(pagination.currentPage * itemsPerPage, pagination.totalItems), 
+                        total: pagination.totalItems 
+                      })
+                    : t('Uptime.Messages.NoItems')}
                 </div>
               </div>
               <Pagination>

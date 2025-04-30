@@ -84,6 +84,10 @@ func (ns *NotificationSender) SendSpecificNotification(n models.Notification, me
 		if n.PushoverUrl.Valid && n.PushoverToken.Valid && n.PushoverUser.Valid {
 			ns.sendPushover(n, message)
 		}
+	case "echobell":
+		if n.EchobellURL.Valid {
+			ns.sendEchobell(n, message)
+		}
 	}
 }
 
@@ -235,5 +239,28 @@ func (ns *NotificationSender) sendPushover(n models.Notification, message string
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Printf("Pushover: ERROR status code: %d\n", resp.StatusCode)
+	}
+}
+
+func (ns *NotificationSender) sendEchobell(n models.Notification, message string) {
+	jsonData := fmt.Sprintf(`{"message": "%s"}`, message)
+	req, err := http.NewRequest("POST", n.EchobellURL.String, strings.NewReader(jsonData))
+	if err != nil {
+		fmt.Printf("Echobell: ERROR creating request: %v\n", err)
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Echobell: ERROR sending request: %v\n", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Echobell: ERROR status code: %d\n", resp.StatusCode)
 	}
 }

@@ -4,10 +4,6 @@ The easiest way to install CoreControl is using Docker Compose. Follow these ste
 
 ## Docker Compose Installation
 
-::: danger
-CoreControl is at an early stage of development and is subject to change. It is not recommended for use in a production environment at this time.
-:::
-
 1. Make sure [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) are installed on your system.
 
 2. Create a file named `docker-compose.yml` with the following content:
