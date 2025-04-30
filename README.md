@@ -96,7 +96,7 @@ __Password:__ admin
 
 The application is build with:
 - Next.js & Typescript
-- Go (for the agent)
+- Go (used for the agent)
 - Tailwindcss with [shadcn](shadcn.com)
 - PostgreSQL with [Prisma ORM](https://www.prisma.io/)
 - Icons by [Lucide](https://lucide.dev/)
