@@ -350,6 +350,7 @@
           "Type": "Typ",
           "SMTP": {
             "Title": "SMTP",
+            "Description": "Sende Benachrichtigungen via SMTP",
             "Host": "SMTP-Host",
             "Port": "SMTP-Port",
             "Secure": "Sichere Verbindung (TLS/SSL)",
@@ -360,31 +361,37 @@
           },
           "Telegram": {
             "Title": "Telegram",
+            "Description": "Sende Benachrichtigungen via Telegram",
             "Token": "Bot-Token",
             "ChatId": "Chat-ID"
           },
           "Discord": {
             "Title": "Discord",
+            "Description": "Sende Benachrichtigungen via Discord",
             "Webhook": "Webhook-URL"
           },
           "Gotify": {
             "Title": "Gotify",
+            "Description": "Sende Benachrichtigungen via Gotify",
             "Url": "Gotify-URL",
             "Token": "Gotify-Token"
           },
           "Ntfy": {
             "Title": "Ntfy",
+            "Description": "Sende Benachrichtigungen via Ntfy",
             "Url": "Ntfy-URL",
             "Token": "Ntfy-Token"
           },
           "Pushover": {
             "Title": "Pushover",
+            "Description": "Sende Benachrichtigungen via Pushover",
             "Url": "Pushover-URL",
             "Token": "Pushover-Token",
             "User": "Pushover-Benutzer"
           },
           "Echobell": {
             "Title": "Echobell",
+            "Description": "Sende Benachrichtigungen via Echobell",
             "Url": "Echobell-URL",
             "AddMessage": "Füge in Echobell den \"message\" Feld hinzu."
           }
