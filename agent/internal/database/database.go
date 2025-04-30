@@ -86,7 +86,7 @@ func LoadNotifications(db *sql.DB) ([]models.Notification, error) {
 	rows, err := db.Query(
 		`SELECT id, enabled, type, "smtpHost", "smtpPort", "smtpFrom", "smtpUser", "smtpPass", "smtpSecure", "smtpTo",
 		       "telegramChatId", "telegramToken", "discordWebhook", "gotifyUrl", "gotifyToken", "ntfyUrl", "ntfyToken",
-			   "pushoverUrl", "pushoverToken", "pushoverUser", "echobellUrl"
+			   "pushoverUrl", "pushoverToken", "pushoverUser", "echobellURL"
 		FROM notification
 		WHERE enabled = true`,
 	)
