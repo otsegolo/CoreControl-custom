@@ -4,7 +4,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -25,22 +24,19 @@ import {
   List,
   Pencil,
   Zap,
-  ViewIcon,
   Grid3X3,
   HelpCircle,
 } from "lucide-react";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -75,10 +71,10 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 import { StatusIndicator } from "@/components/status-indicator";
-import { Toaster } from "@/components/ui/sonner"
-import { toast } from "sonner"
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,7 +94,7 @@ interface Application {
   online: boolean;
   serverId: number;
   uptimecheckUrl?: string;
-  minDowntimeSeconds?: number; // NEW: per-app downtime
+  minDowntimeSeconds?: number;
 }
 
 interface Server {
@@ -115,6 +111,27 @@ interface ApplicationsResponse {
 
 export default function Dashboard() {
   const t = useTranslations();
+
+  const savedLayout = Cookies.get("layoutPreference-app");
+  const initialLayout = {
+    isGridLayout: savedLayout === "grid",
+    isCompactLayout: savedLayout === "compact",
+  };
+
+  const defaultItemsPerPage = (() => {
+    if (initialLayout.isGridLayout) return 15;
+    if (initialLayout.isCompactLayout) return 30;
+    return 5;
+  })();
+
+  const savedItemsPerPage = Cookies.get("itemsPerPage-app");
+  const initialItemsPerPage = savedItemsPerPage
+    ? parseInt(savedItemsPerPage)
+    : defaultItemsPerPage;
+
+  const [layout, setLayout] = useState(initialLayout);
+  const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
+
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [icon, setIcon] = useState<string>("");
@@ -143,47 +160,35 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [isSearching, setIsSearching] = useState<boolean>(false);
 
-  const savedLayout = Cookies.get("layoutPreference-app");
-  const savedItemsPerPage = Cookies.get("itemsPerPage-app");
-  const initialIsGridLayout = savedLayout === "grid";
-  const initialIsCompactLayout = savedLayout === "compact";
-  const defaultItemsPerPage = initialIsGridLayout ? 15 : (initialIsCompactLayout ? 30 : 5);
-  const initialItemsPerPage = savedItemsPerPage ? parseInt(savedItemsPerPage) : defaultItemsPerPage;
-
-  const [isGridLayout, setIsGridLayout] = useState<boolean>(initialIsGridLayout);
-  const [isCompactLayout, setIsCompactLayout] = useState<boolean>(initialIsCompactLayout);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(initialItemsPerPage);
   const customInputRef = useRef<HTMLInputElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const toggleLayout = (layout: string) => {
-    if (layout === "standard") {
-      setIsGridLayout(false);
-      setIsCompactLayout(false);
+  const layoutPreferences: Record<string, () => void> = {
+    standard: () => {
+      setLayout({ isGridLayout: false, isCompactLayout: false });
       Cookies.set("layoutPreference-app", "standard", {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
-    } else if (layout === "grid") {
-      setIsGridLayout(true);
-      setIsCompactLayout(false);
+    },
+    grid: () => {
+      setLayout({ isGridLayout: true, isCompactLayout: false });
       Cookies.set("layoutPreference-app", "grid", {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
-    } else if (layout === "compact") {
-      setIsGridLayout(false);
-      setIsCompactLayout(true);
+    },
+    compact: () => {
+      setLayout({ isGridLayout: false, isCompactLayout: true });
       Cookies.set("layoutPreference-app", "compact", {
         expires: 365,
         path: "/",
         sameSite: "strict",
       });
-    }
+    },
   };
 
   const handleItemsPerPageChange = (value: string) => {
@@ -193,14 +198,14 @@ export default function Dashboard() {
 
     debounceTimerRef.current = setTimeout(() => {
       const newItemsPerPage = parseInt(value);
-      
+
       if (isNaN(newItemsPerPage) || newItemsPerPage < 1) {
         toast.error(t('Applications.Messages.NumberValidation'));
         return;
       }
-      
+
       const validatedValue = Math.min(Math.max(newItemsPerPage, 1), 100);
-      
+
       setItemsPerPage(validatedValue);
       setCurrentPage(1);
       Cookies.set("itemsPerPage-app", String(validatedValue), {
@@ -221,7 +226,7 @@ export default function Dashboard() {
         localURL,
         serverId,
         uptimecheckUrl: customUptimeCheck ? uptimecheckUrl : "",
-        minDowntimeSeconds, // NEW
+        minDowntimeSeconds,
       });
       getApplications();
       toast.success(t('Applications.Messages.AddSuccess'));
@@ -251,7 +256,6 @@ export default function Dashboard() {
     }
   };
 
-  // Calculate current range of items being displayed
   const [totalItems, setTotalItems] = useState<number>(0);
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -279,11 +283,11 @@ export default function Dashboard() {
     setEditId(app.id);
     setEditServerId(app.serverId);
     setEditName(app.name);
-    setEditDescription(app.description || "");
-    setEditIcon(app.icon || "");
-    setEditLocalURL(app.localURL || "");
-    setEditPublicURL(app.publicURL || "");
-    setEditMinDowntimeSeconds(app.minDowntimeSeconds ?? undefined); // NEW
+    setEditDescription(app.description ?? "");
+    setEditIcon(app.icon ?? "");
+    setEditLocalURL(app.localURL ?? "");
+    setEditPublicURL(app.publicURL);
+    setEditMinDowntimeSeconds(app.minDowntimeSeconds ?? undefined);
     if (app.uptimecheckUrl) {
       setEditCustomUptimeCheck(true);
       setEditUptimecheckUrl(app.uptimecheckUrl);
@@ -306,7 +310,7 @@ export default function Dashboard() {
         publicURL: editPublicURL,
         localURL: editLocalURL,
         uptimecheckUrl: editCustomUptimeCheck ? editUptimecheckUrl : "",
-        minDowntimeSeconds: editMinDowntimeSeconds, // NEW
+        minDowntimeSeconds: editMinDowntimeSeconds,
       });
       getApplications();
       setEditId(null);
@@ -319,16 +323,13 @@ export default function Dashboard() {
 
   const searchApplications = async () => {
     try {
-      setIsSearching(true);
       const response = await axios.post<{ results: Application[] }>(
         "/api/applications/search",
         { searchterm: searchTerm }
       );
       setApplications(response.data.results);
-      setIsSearching(false);
     } catch (error: any) {
       console.error("Search error:", error.response?.data);
-      setIsSearching(false);
     }
   };
 
@@ -351,6 +352,9 @@ export default function Dashboard() {
   const generateEditIconURL = async () => {
     setEditIcon("https://cdn.jsdelivr.net/gh/selfhst/icons/png/" + editName.toLowerCase() + ".png")
   }
+
+  const layoutClass = layout.isGridLayout ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "space-y-4";
+  const layoutIcon = layout.isGridLayout ? <LayoutGrid className="h-4 w-4" /> : <List className="h-4 w-4" />;
 
   return (
     <SidebarProvider>
@@ -385,23 +389,19 @@ export default function Dashboard() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" title={t('Applications.Views.ChangeView')}>
-                    {isCompactLayout ? (
+                    {layout.isCompactLayout ? (
                       <Grid3X3 className="h-4 w-4" />
-                    ) : isGridLayout ? (
-                      <LayoutGrid className="h-4 w-4" />
-                    ) : (
-                      <List className="h-4 w-4" />
-                    )}
+                    ) : layoutIcon}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => toggleLayout("standard")}>
+                  <DropdownMenuItem onClick={() => layoutPreferences["standard"]()}>
                     <List className="h-4 w-4 mr-2" /> {t('Applications.Views.ListView')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => toggleLayout("grid")}>
+                  <DropdownMenuItem onClick={() => layoutPreferences["grid"]()}>
                     <LayoutGrid className="h-4 w-4 mr-2" /> {t('Applications.Views.GridView')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => toggleLayout("compact")}>
+                  <DropdownMenuItem onClick={() => layoutPreferences["compact"]()}>
                     <Grid3X3 className="h-4 w-4 mr-2" /> {t('Applications.Views.CompactView')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -443,8 +443,6 @@ export default function Dashboard() {
                         className="h-8"
                         defaultValue={itemsPerPage}
                         onChange={(e) => {
-                          // Don't immediately apply the change while typing
-                          // Just validate the input for visual feedback
                           const value = parseInt(e.target.value);
                           if (isNaN(value) || value < 1 || value > 100) {
                             e.target.classList.add("border-red-500");
@@ -453,7 +451,6 @@ export default function Dashboard() {
                           }
                         }}
                         onBlur={(e) => {
-                          // Apply the change when the input loses focus
                           const value = parseInt(e.target.value);
                           if (value >= 1 && value <= 100) {
                             handleItemsPerPageChange(e.target.value);
@@ -461,7 +458,6 @@ export default function Dashboard() {
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            // Clear any existing debounce timer to apply immediately
                             if (debounceTimerRef.current) {
                               clearTimeout(debounceTimerRef.current);
                               debounceTimerRef.current = null;
@@ -469,7 +465,6 @@ export default function Dashboard() {
                             
                             const value = parseInt((e.target as HTMLInputElement).value);
                             if (value >= 1 && value <= 100) {
-                              // Apply change immediately on Enter
                               const validatedValue = Math.min(Math.max(value, 1), 100);
                               setItemsPerPage(validatedValue);
                               setCurrentPage(1);
@@ -479,7 +474,6 @@ export default function Dashboard() {
                                 sameSite: "strict",
                               });
                               
-                              // Close the dropdown
                               document.body.click();
                             }
                           }
@@ -552,8 +546,8 @@ export default function Dashboard() {
                                 placeholder={t('Applications.Add.IconURLPlaceholder')}
                                 onChange={(e) => setIcon(e.target.value)}
                                 value={icon}
-                            />
-                            <Button variant="outline" size="icon" onClick={generateIconURL}>
+                              />
+                              <Button variant="outline" size="icon" onClick={generateIconURL}>
                                 <Zap />
                               </Button>
                             </div>
@@ -642,17 +636,9 @@ export default function Dashboard() {
           </div>
           <br />
           {!loading ? (
-            <div
-              className={
-                isCompactLayout
-                  ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2"
-                  : isGridLayout
-                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-                  : "space-y-4"
-              }
-            >
+            <div className={layoutClass}>
               {applications.map((app) => (
-                isCompactLayout ? (
+                layout.isCompactLayout ? (
                   <div
                     key={app.id}
                     className="bg-card rounded-md border p-3 flex flex-col items-center justify-between h-[120px] w-full cursor-pointer hover:shadow-md transition-shadow relative"
@@ -681,7 +667,7 @@ export default function Dashboard() {
                   <Card
                     key={app.id}
                     className={
-                      isGridLayout
+                      layout.isGridLayout
                         ? "h-full flex flex-col justify-between relative"
                         : "w-full mb-4 relative"
                     }
@@ -690,7 +676,7 @@ export default function Dashboard() {
                       <div className="absolute top-2 right-2">
                         <StatusIndicator isOnline={app.online} />
                       </div>
-                      <div className={`flex ${isGridLayout ? 'flex-col' : 'items-center justify-between'} w-full mt-4 mb-4`}>
+                      <div className={`flex ${layout.isGridLayout ? 'flex-col' : 'items-center justify-between'} w-full mt-4 mb-4`}>
                         <div className="flex items-center">
                           <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-md">
                             {app.icon ? (
@@ -712,12 +698,12 @@ export default function Dashboard() {
                               {app.description && (
                                 <br className="hidden md:block" />
                               )}
-                              {t('Applications.Card.Server')}: {app.server || t('Applications.Card.NoServer')}
+                              {t('Applications.Card.Server')}: {app.server ?? t('Applications.Card.NoServer')}
                             </CardDescription>
                           </div>
                         </div>
                         
-                        {!isGridLayout && (
+                        {!layout.isGridLayout && (
                           <div className="flex flex-col items-end justify-start space-y-2 w-[190px]">
                             <div className="flex items-center gap-2 w-full">
                               <div className="flex flex-col space-y-2 flex-grow">
@@ -931,7 +917,7 @@ export default function Dashboard() {
                       </div>
                     </CardHeader>
                     
-                    {isGridLayout && (
+                    {layout.isGridLayout && (
                       <CardFooter className="mt-auto">
                         <div className="flex items-center gap-2 w-full">
                           <div className={`grid ${app.localURL ? 'grid-cols-2' : 'grid-cols-1'} gap-2 flex-grow`}>
@@ -1037,7 +1023,7 @@ export default function Dashboard() {
                                         <Label>
                                           Icon URL{" "}
                                           <span className="text-stone-600">
-                                            (optional)
+                                                (optional)
                                           </span>
                                         </Label>
                                         <div className="flex gap-2">
@@ -1143,32 +1129,30 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="inline-block" role="status" aria-label="loading">
-                <svg
-                  className="w-6 h-6 stroke-white animate-spin"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clip-path="url(#clip0_9023_61563)">
-                    <path
-                      d="M14.6437 2.05426C11.9803 1.2966 9.01686 1.64245 6.50315 3.25548C1.85499 6.23817 0.504864 12.4242 3.48756 17.0724C6.47025 21.7205 12.6563 23.0706 17.3044 20.088C20.4971 18.0393 22.1338 14.4793 21.8792 10.9444"
-                      stroke="stroke-current"
-                      stroke-width="1.4"
-                      stroke-linecap="round"
-                      className="my-path"
-                    ></path>
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_9023_61563">
-                      <rect width="24" height="24" fill="white"></rect>
-                    </clipPath>
-                  </defs>
-                </svg>
-                <span className="sr-only">{t('Common.Loading')}</span>
-              </div>
-            </div>
+            <output className="inline-block" aria-label="loading">
+              <svg
+                className="w-6 h-6 stroke-white animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clipPath="url(#clip0_9023_61563)">
+                  <path
+                    d="M14.6437 2.05426C11.9803 1.2966 9.01686 1.64245 6.50315 3.25548C1.85499 6.23817 0.504864 12.4242 3.48756 17.0724C6.47025 21.7205 12.6563 23.0706 17.3044 20.088C20.4971 18.0393 22.1338 14.4793 21.8792 10.9444"
+                    stroke="stroke-current"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    className="my-path"
+                  ></path>
+                </g>
+                <defs>
+                  <clipPath id="clip0_9023_61563">
+                    <rect width="24" height="24" fill="white"></rect>
+                  </clipPath>
+                </defs>
+              </svg>
+              <span className="sr-only">{t('Common.Loading')}</span>
+            </output>
           )}
           <div className="pt-4 pb-4">
             <div className="flex justify-between items-center mb-2">
