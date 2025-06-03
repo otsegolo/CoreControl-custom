@@ -3,7 +3,7 @@
 
 ## Features
 
-- Everything else in normal corecontrol, plus notifications won't be sent for an app going down until it's been down for at least 30 seconds. This is a buggy wierd implementation of it because I'm not great at these languages but it'll work until the actually good devs adds this feature properly to the main repo.
+- Everything else in normal corecontrol, plus notifications won't be sent for an app going down until it's been down for at least 30 seconds. This is a buggy wierd implementation of it because I'm not great at these languages but it'll work until the actually good devs adds this feature properly to the main repo. (just saw the v2 branch, i'm excited, hope this feature is added on there)
 
 ---
 
