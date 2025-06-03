@@ -19,9 +19,10 @@ import (
 // Minimum downtime in seconds before sending notification
 const globalMinDowntimeSeconds = 30
 
-// Track when each app went offline (in-memory, package-level)
-// Key: app.ID, Value: time.Time when first detected offline
+// Track when each app went offline or online (in-memory, package-level)
+// Key: app.ID, Value: time.Time when first detected offline/online
 var offlineSince = make(map[int]time.Time)
+var onlineSince = make(map[int]time.Time)
 
 // MonitorApplications checks and updates the status of all applications
 func MonitorApplications(db *sql.DB, client *http.Client, apps []models.Application, notifSender *notifications.NotificationSender) {
@@ -90,29 +91,28 @@ func MonitorApplications(db *sql.DB, client *http.Client, apps []models.Applicat
 		if !isOnline {
 			if _, exists := offlineSince[app.ID]; !exists {
 				offlineSince[app.ID] = time.Now()
+				// Reset online timer
+				delete(onlineSince, app.ID)
 			}
 		} else {
-			// App is online, reset offline timer
-			delete(offlineSince, app.ID)
+			if _, exists := onlineSince[app.ID]; !exists {
+				onlineSince[app.ID] = time.Now()
+				// Reset offline timer
+				delete(offlineSince, app.ID)
+			}
 		}
 
 		if isOnline != app.Online {
 			status := "offline"
+			shouldNotify := true
 			if isOnline {
 				status = "online"
-				// App is back online: notify and update DB immediately
-				message := strings.ReplaceAll(notificationTemplate, "!name", app.Name)
-				message = strings.ReplaceAll(message, "!url", app.PublicURL)
-				message = strings.ReplaceAll(message, "!status", status)
-				notifSender.SendNotifications(message)
-				updateApplicationStatus(db, app.ID, isOnline)
-				addUptimeHistoryEntry(db, app.ID, isOnline)
-				continue
-			}
-
-			// App went offline: only notify and update DB after min downtime
-			shouldNotify := true
-			if !isOnline {
+				if since, ok := onlineSince[app.ID]; ok {
+					if time.Since(since) < time.Duration(minDowntime)*time.Second {
+						shouldNotify = false
+					}
+				}
+			} else {
 				if since, ok := offlineSince[app.ID]; ok {
 					if time.Since(since) < time.Duration(minDowntime)*time.Second {
 						shouldNotify = false
