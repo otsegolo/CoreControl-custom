@@ -98,6 +98,7 @@ interface Application {
   online: boolean;
   serverId: number;
   uptimecheckUrl?: string;
+  minDowntimeSeconds?: number; // NEW: per-app downtime
 }
 
 interface Server {
@@ -122,6 +123,7 @@ export default function Dashboard() {
   const [serverId, setServerId] = useState<number | null>(null);
   const [customUptimeCheck, setCustomUptimeCheck] = useState<boolean>(false);
   const [uptimecheckUrl, setUptimecheckUrl] = useState<string>("");
+  const [minDowntimeSeconds, setMinDowntimeSeconds] = useState<number | undefined>(undefined);
 
   const [editName, setEditName] = useState<string>("");
   const [editDescription, setEditDescription] = useState<string>("");
@@ -132,6 +134,7 @@ export default function Dashboard() {
   const [editServerId, setEditServerId] = useState<number | null>(null);
   const [editCustomUptimeCheck, setEditCustomUptimeCheck] = useState<boolean>(false);
   const [editUptimecheckUrl, setEditUptimecheckUrl] = useState<string>("");
+  const [editMinDowntimeSeconds, setEditMinDowntimeSeconds] = useState<number | undefined>(undefined);
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(1);
@@ -218,6 +221,7 @@ export default function Dashboard() {
         localURL,
         serverId,
         uptimecheckUrl: customUptimeCheck ? uptimecheckUrl : "",
+        minDowntimeSeconds, // NEW
       });
       getApplications();
       toast.success(t('Applications.Messages.AddSuccess'));
@@ -279,7 +283,7 @@ export default function Dashboard() {
     setEditIcon(app.icon || "");
     setEditLocalURL(app.localURL || "");
     setEditPublicURL(app.publicURL || "");
-    
+    setEditMinDowntimeSeconds(app.minDowntimeSeconds ?? undefined); // NEW
     if (app.uptimecheckUrl) {
       setEditCustomUptimeCheck(true);
       setEditUptimecheckUrl(app.uptimecheckUrl);
@@ -302,6 +306,7 @@ export default function Dashboard() {
         publicURL: editPublicURL,
         localURL: editLocalURL,
         uptimecheckUrl: editCustomUptimeCheck ? editUptimecheckUrl : "",
+        minDowntimeSeconds: editMinDowntimeSeconds, // NEW
       });
       getApplications();
       setEditId(null);
@@ -568,6 +573,16 @@ export default function Dashboard() {
                             <Input
                               placeholder={t('Applications.Add.LocalURLPlaceholder')}
                               onChange={(e) => setLocalURL(e.target.value)}
+                            />
+                          </div>
+                          <div className="grid w-full items-center gap-1.5">
+                            <Label>Minimum downtime before notification (seconds)</Label>
+                            <Input
+                              type="number"
+                              min={0}
+                              placeholder="Leave blank for default"
+                              value={minDowntimeSeconds ?? ""}
+                              onChange={e => setMinDowntimeSeconds(e.target.value ? parseInt(e.target.value) : undefined)}
                             />
                           </div>
                           <div className="flex items-center space-x-2">
@@ -853,6 +868,16 @@ export default function Dashboard() {
                                               }
                                             />
                                           </div>
+                                          <div className="grid w-full items-center gap-1.5">
+                                            <Label>Minimum downtime before notification (seconds)</Label>
+                                            <Input
+                                              type="number"
+                                              min={0}
+                                              placeholder="Leave blank for default"
+                                              value={editMinDowntimeSeconds ?? ""}
+                                              onChange={e => setEditMinDowntimeSeconds(e.target.value ? parseInt(e.target.value) : undefined)}
+                                            />
+                                          </div>
                                           <div className="flex items-center space-x-2">
                                             <input
                                               type="checkbox"
@@ -1051,6 +1076,16 @@ export default function Dashboard() {
                                           onChange={(e) =>
                                             setEditLocalURL(e.target.value)
                                           }
+                                        />
+                                      </div>
+                                      <div className="grid w-full items-center gap-1.5">
+                                        <Label>Minimum downtime before notification (seconds)</Label>
+                                        <Input
+                                          type="number"
+                                          min={0}
+                                          placeholder="Leave blank for default"
+                                          value={editMinDowntimeSeconds ?? ""}
+                                          onChange={e => setEditMinDowntimeSeconds(e.target.value ? parseInt(e.target.value) : undefined)}
                                         />
                                       </div>
                                       <div className="flex items-center space-x-2">

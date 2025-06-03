@@ -15,16 +15,17 @@ datasource db {
 }
 
 model application {
-  id            Int       @id @default(autoincrement())
-  serverId      Int       @default(1)
-  name          String
-  description   String?
-  icon          String
-  publicURL     String
-  localURL      String?
-  uptimecheckUrl String?
-  createdAt     DateTime  @default(now())
-  online         Boolean  @default(true)
+  id                   Int      @id @default(autoincrement())
+  serverId             Int      @default(1)
+  name                 String
+  description          String?
+  icon                 String
+  publicURL            String
+  localURL             String?
+  uptimecheckUrl       String?
+  createdAt            DateTime @default(now())
+  online               Boolean  @default(true)
+  min_downtime_seconds Int?     // <-- ADD THIS LINE
 }
 
 model uptime_history {

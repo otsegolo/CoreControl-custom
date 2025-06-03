@@ -5,11 +5,12 @@ import (
 )
 
 type Application struct {
-	ID             int
-	Name           string
-	PublicURL      string
-	Online         bool
-	UptimeCheckURL string
+	ID                 int
+	Name               string
+	PublicURL          string
+	Online             bool
+	UptimeCheckURL     string
+	MinDowntimeSeconds sql.NullInt64 `db:"min_downtime_seconds"`
 }
 
 type Server struct {

@@ -16,6 +16,13 @@ import (
 	"github.com/corecontrol/agent/internal/notifications"
 )
 
+// Minimum downtime in seconds before sending notification
+const globalMinDowntimeSeconds = 30
+
+// Track when each app went offline (in-memory, package-level)
+// Key: app.ID, Value: time.Time when first detected offline
+var offlineSince = make(map[int]time.Time)
+
 // MonitorApplications checks and updates the status of all applications
 func MonitorApplications(db *sql.DB, client *http.Client, apps []models.Application, notifSender *notifications.NotificationSender) {
 	var notificationTemplate string
@@ -74,24 +81,54 @@ func MonitorApplications(db *sql.DB, client *http.Client, apps []models.Applicat
 			}
 		}
 
+		// Minimum downtime notification logic
+		minDowntime := globalMinDowntimeSeconds
+		if app.MinDowntimeSeconds.Valid {
+			minDowntime = int(app.MinDowntimeSeconds.Int64)
+		}
+
+		if !isOnline {
+			if _, exists := offlineSince[app.ID]; !exists {
+				offlineSince[app.ID] = time.Now()
+			}
+		} else {
+			// App is online, reset offline timer
+			delete(offlineSince, app.ID)
+		}
+
 		if isOnline != app.Online {
 			status := "offline"
 			if isOnline {
 				status = "online"
+				// App is back online: notify and update DB immediately
+				message := strings.ReplaceAll(notificationTemplate, "!name", app.Name)
+				message = strings.ReplaceAll(message, "!url", app.PublicURL)
+				message = strings.ReplaceAll(message, "!status", status)
+				notifSender.SendNotifications(message)
+				updateApplicationStatus(db, app.ID, isOnline)
+				addUptimeHistoryEntry(db, app.ID, isOnline)
+				continue
 			}
 
-			message := strings.ReplaceAll(notificationTemplate, "!name", app.Name)
-			message = strings.ReplaceAll(message, "!url", app.PublicURL)
-			message = strings.ReplaceAll(message, "!status", status)
+			// App went offline: only notify and update DB after min downtime
+			shouldNotify := true
+			if !isOnline {
+				if since, ok := offlineSince[app.ID]; ok {
+					if time.Since(since) < time.Duration(minDowntime)*time.Second {
+						shouldNotify = false
+					}
+				}
+			}
 
-			notifSender.SendNotifications(message)
+			if shouldNotify {
+				message := strings.ReplaceAll(notificationTemplate, "!name", app.Name)
+				message = strings.ReplaceAll(message, "!url", app.PublicURL)
+				message = strings.ReplaceAll(message, "!status", status)
+				notifSender.SendNotifications(message)
+				updateApplicationStatus(db, app.ID, isOnline)
+				addUptimeHistoryEntry(db, app.ID, isOnline)
+			}
 		}
-
-		// Update application status in database
-		updateApplicationStatus(db, app.ID, isOnline)
-
-		// Add entry to uptime history
-		addUptimeHistoryEntry(db, app.ID, isOnline)
 	}
 }
 

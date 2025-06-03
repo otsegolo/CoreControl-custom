@@ -9,12 +9,13 @@ interface AddRequest {
     publicURL: string;
     localURL: string;
     uptimecheckUrl: string;
+    minDowntimeSeconds?: number; // NEW
 }
 
 export async function POST(request: NextRequest) {
     try {
         const body: AddRequest = await request.json();
-        const { serverId, name, description, icon, publicURL, localURL, uptimecheckUrl } = body;  
+        const { serverId, name, description, icon, publicURL, localURL, uptimecheckUrl, minDowntimeSeconds } = body;  
         
         const application = await prisma.application.create({
             data: {
@@ -24,7 +25,8 @@ export async function POST(request: NextRequest) {
                 icon,
                 publicURL,
                 localURL,
-                uptimecheckUrl
+                uptimecheckUrl,
+                min_downtime_seconds: minDowntimeSeconds ?? null, // NEW
             }
         });
 

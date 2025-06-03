@@ -16,7 +16,19 @@ export async function POST(request: NextRequest) {
       prisma.application.findMany({
         skip: (page - 1) * ITEMS_PER_PAGE,
         take: ITEMS_PER_PAGE,
-        orderBy: { name: "asc" }
+        orderBy: { name: "asc" },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          icon: true,
+          publicURL: true,
+          localURL: true,
+          serverId: true,
+          online: true,
+          uptimecheckUrl: true,
+          min_downtime_seconds: true, // NEW
+        },
       }),
       prisma.application.count(),
       prisma.server.findMany()
@@ -32,6 +44,7 @@ export async function POST(request: NextRequest) {
 
     const applicationsWithServers = applications.map((app: any) => ({
         ...app,
+        minDowntimeSeconds: app.min_downtime_seconds, // NEW
         server: servers.find((s: any) => s.id === app.serverId)?.name || "No server"
       }));
 
