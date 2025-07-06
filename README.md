@@ -18,7 +18,7 @@ haedlessdev/corecontrol:latest
 becomes
 
 ```
-george1717/corecontrol-custom:custom
+otsegolo/corecontrol-custom:custom
 ```
 
 #### and 
@@ -30,7 +30,7 @@ haedlessdev/corecontrol-agent:latest
 becomes
 
 ```
-george1717/corecontrol-agent-custom:custom
+otsegolo/corecontrol-agent-custom:custom
 ```
 
 ---
